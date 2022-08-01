@@ -1,0 +1,10 @@
+FILE=main.cpp
+if [ -f "$FILE" ]; then
+    rm a.out
+fi
+
+clear
+
+g++ main.cpp -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network
+./a.out
+rm a.out
