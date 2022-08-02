@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+#include <SFML/System.hpp>
 
 // Cookie Includes
 #include "./GameObject.cpp"
@@ -26,7 +27,7 @@ public:
     }
 
     void Run(){
-        if (!window_initialized) { 
+        if (!window_initialized) {
             cout << "Window not initialzed!" << endl;
             return;
         }
@@ -41,8 +42,10 @@ public:
             }
             vector<GameObject*> gameobjects = GameObject::object_vector;
             vector<Transformable*> all_drawables;
+            // GAMEOBJECT UPDATE AND STORAGE UPDATES
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE
+                gameobjects[i]->UpdateRenderer();
                 gameobjects[i]->Update();
                 gameobjects[i]->FindCollision();
                 gameobjects[i]->SyncComponents();
