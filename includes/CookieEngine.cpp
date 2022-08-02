@@ -19,14 +19,16 @@ private:
     bool window_initialized = false;
 public:
     void InitWindow(int width, int height, string title){
-        app.create(VideoMode(width, height), title);
+        ContextSettings settings;
+        settings.antialiasingLevel = 16;
+        app.create(VideoMode(width, height), title, Style::Default, settings);
         window_initialized = true;
     }
 
     void Run(){
         if (!window_initialized) { 
             cout << "Window not initialzed!" << endl;
-            return; 
+            return;
         }
         app.setFramerateLimit(60);
 

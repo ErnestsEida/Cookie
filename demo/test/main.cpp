@@ -28,7 +28,7 @@ public:
     void OnCollision(GameObject* other) {
         if (other != NULL) {
             this->grounded = true;
-            this->Set_Y(this->Get_Y() - (this->Get_Collider()->height));
+            this->Set_Y(this->Get_Y() - (this->Get_Collider()->height / 5));
         }
     }
 };
@@ -37,14 +37,14 @@ class CollisionBlock : public GameObject {
 public:
     CollisionBlock(int x, int y) : GameObject(x, y) {}
     void Update() override {}
-    void OnCollision(GameObject* other) { }
+    void OnCollision(GameObject* other) {}
 };
 
 int main()
 {
     Player player(10, 10);
-    CircleShape *shape = new CircleShape(10);
-    player.InsertDrawable(shape);
+    GameShape shape(GameShape::ShapeType::Rectangle, 10, 10);
+    player.AddShape(shape);
     player.Set_Collider(10, 10);
 
     CollisionBlock block(0, 710);

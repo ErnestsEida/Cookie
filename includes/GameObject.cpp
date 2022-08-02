@@ -1,5 +1,4 @@
 #include "./GameObject.h"
-#include <SFML/Graphics/Drawable.hpp>
 
 using namespace std;
 using namespace sf;
@@ -148,4 +147,8 @@ void GameObject::FindCollision() {
         }
     }
     this->OnCollision(collision_object);
+}
+
+void GameObject::AddShape(GameShape shape){
+    this->InsertDrawable(shape.GetAsTransformable());
 }

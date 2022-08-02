@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include "./GameShape.cpp"
 
 using namespace std;
 using namespace sf;
@@ -44,6 +45,7 @@ public:
     // MISCELANEOUS
     void InsertNewObject(GameObject*);
     void InsertDrawable(Transformable*); 
+    void AddShape(GameShape);
     void SyncComponents();
     void FindCollision();
 
