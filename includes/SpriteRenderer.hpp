@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "./Animation.hpp"
+#include "Component.hpp"
 
 #include <iostream>
 #include <vector>
@@ -9,7 +10,7 @@
 using namespace sf;
 using namespace std;
 
-class SpriteRenderer {
+class SpriteRenderer : public Component {
 private:
     float frame_speed;
     Clock clock;
@@ -25,17 +26,14 @@ public:
     }
 
     void SetAnimation(Animation* animation){
+        this->ClearDrawables();
         this->animation = animation;
         this->SetFramespeed(this->animation->GetSpriteCount());
-    }
-
-    // GETTERS
-    Sprite* GetSprite() const{
-        return this->animation->GetSprite();
+        this->AddDrawable(this->animation->GetSprite());
     }
 
     // MISC
-    void Iterate() {
+    void Trigger() override {
         if (this->animation != NULL) {
             if(this->clock.getElapsedTime().asSeconds() > 1.0 / this->frame_speed){
                 this->animation->NextSprite();

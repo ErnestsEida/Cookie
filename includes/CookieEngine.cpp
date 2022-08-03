@@ -45,7 +45,7 @@ public:
             // GAMEOBJECT UPDATE AND STORAGE UPDATES
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE
-                gameobjects[i]->UpdateRenderer();
+                gameobjects[i]->TriggerComponents();
                 gameobjects[i]->Update();
                 gameobjects[i]->FindCollision();
                 gameobjects[i]->SyncComponents();

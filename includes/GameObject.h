@@ -3,8 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include "./GameShape.cpp"
-#include "./SpriteRenderer.hpp"
+#include "Component.hpp"
+#include "SpriteRenderer.hpp"
+#include "GameShape.hpp"
 
 using namespace std;
 using namespace sf;
@@ -14,9 +15,10 @@ private:
     int x, y, z;
     string object_name;
     string tag;
+    vector<Component*> components;
     vector<Transformable*> drawable_components;
     sf::FloatRect* collider;
-    SpriteRenderer* sprite_renderer;
+    void AppendDrawables(vector<Transformable*>);
 public:
     // STATIC VARIABLES
     static int object_count;
@@ -45,18 +47,17 @@ public:
     void Set_ObjectName(string);
     void Set_Tag(string);
     void Set_Collider(float, float);
-    void Set_Animation(Animation*);
+    void Set_Component(Component*);
 
     // MISCELANEOUS
     void InsertNewObject(GameObject*);
     void InsertDrawable(Transformable*); 
-    void AddShape(GameShape);
-    void AddSprite(SpriteRenderer);
+    void ClearDrawables();
 
     // AUTO-CALL METHODS
     void SyncComponents();
     void FindCollision();
-    void UpdateRenderer();
+    void TriggerComponents();
 
     // STEP FUNCTIONS
     virtual void Update() = 0;

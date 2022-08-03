@@ -9,15 +9,19 @@ private:
     float vsp;
     Animation* idleAnimation = new Animation("./src/idle.png", 48, 48, 5);
     Animation* runAnimation = new Animation("./src/run.png", 48, 48, 6);
+    SpriteRenderer* renderer;
 public:
-    Player(int x, int y) : GameObject(x, y) {}
+    Player(int x, int y) : GameObject(x, y) {
+        renderer = new SpriteRenderer();
+        this->Set_Component(renderer);
+    }
 
     void Update() override {
         int hsp = (Keyboard::isKeyPressed(Keyboard::Key::D) - Keyboard::isKeyPressed(Keyboard::Key::A)) * 4;
         if (hsp != 0) {
-            Set_Animation(runAnimation);
+            renderer->SetAnimation(runAnimation);
         } else {
-            Set_Animation(idleAnimation);
+            renderer->SetAnimation(idleAnimation);
         }
         if (!grounded) {
             vsp += 0.1;
@@ -43,7 +47,10 @@ public:
 
 class CollisionBlock : public GameObject {
 public:
-    CollisionBlock(int x, int y) : GameObject(x, y) {}
+    CollisionBlock(int x, int y) : GameObject(x, y) {
+        GameShape* shape = new GameShape(GameShape::ShapeType::Rectangle, 1280, 10);
+        this->Set_Component(shape);
+    }
     void Update() override {}
     void OnCollision(GameObject* other) {} 
 };
@@ -54,8 +61,6 @@ int main()
     player.Set_Collider(50, 37);
 
     CollisionBlock block(0, 710);
-    RectangleShape *r_shape = new RectangleShape(Vector2f(1280, 10));
-    block.InsertDrawable(r_shape);
     block.Set_Collider(1280, 10);
 
     CookieEngine engine;

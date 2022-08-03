@@ -18,7 +18,6 @@ GameObject::GameObject() {
     this->object_name = DEFAULT_OBJECT_NAME + to_string(GameObject::object_count);
     this->tag = DEFAULT_TAG;
     this->collider = new FloatRect(this->x, this->y, 1, 1);
-    this->sprite_renderer = new SpriteRenderer();
     GameObject::object_count++;
     InsertNewObject(this);
 }
@@ -30,7 +29,6 @@ GameObject::GameObject(int x, int y) {
     this->object_name = DEFAULT_OBJECT_NAME + to_string(GameObject::object_count);
     this->tag = DEFAULT_TAG;
     this->collider = new FloatRect(this->x, this->y, 1, 1);
-    this->sprite_renderer = new SpriteRenderer();
     GameObject::object_count++;
     InsertNewObject(this);
 }
@@ -42,7 +40,6 @@ GameObject::GameObject(int x, int y, int z) {
     this->object_name = DEFAULT_OBJECT_NAME + to_string(GameObject::object_count);
     this->tag = DEFAULT_TAG;
     this->collider = new FloatRect(this->x, this->y, 1, 1);
-    this->sprite_renderer = new SpriteRenderer();
     GameObject::object_count++;
     InsertNewObject(this);
 }
@@ -54,7 +51,6 @@ GameObject::GameObject(int x, int y, int z, string object_name) {
     this->object_name = object_name;
     this->tag = DEFAULT_TAG;
     this->collider = new FloatRect(this->x, this->y, 1, 1);
-    this->sprite_renderer = new SpriteRenderer();
     GameObject::object_count++;
     InsertNewObject(this);
 }
@@ -66,7 +62,6 @@ GameObject::GameObject(int x, int y, int z, string object_name, string tag) {
     this->object_name = object_name;
     this->tag = tag;
     this->collider = new FloatRect(this->x, this->y, 1, 1);
-    this->sprite_renderer = new SpriteRenderer();
     GameObject::object_count++;
     InsertNewObject(this);
 }
@@ -125,10 +120,8 @@ void GameObject::Set_Collider(float width, float height) {
     this->collider = new FloatRect(this->x, this->y, width, height);
 }
 
-void GameObject::Set_Animation(Animation* animation) {
-    this->sprite_renderer->SetAnimation(animation);
-    this->drawable_components.clear();
-    this->InsertDrawable(this->sprite_renderer->GetSprite());
+void GameObject::Set_Component(Component* component) {
+    this->components.push_back(component);
 }
 
 // MISCELANEOUS
@@ -141,8 +134,8 @@ void GameObject::InsertDrawable(Transformable* drawable) {
     this->drawable_components.push_back(drawable);
 }
 
-void GameObject::AddShape(GameShape shape){
-    this->InsertDrawable(shape.GetAsTransformable());
+void GameObject::ClearDrawables() {
+    this->drawable_components.clear();
 }
 
 // AUTO-CALL 
@@ -166,6 +159,16 @@ void GameObject::FindCollision() {
     this->OnCollision(collision_object);
 }
 
-void GameObject::UpdateRenderer() {
-    this->sprite_renderer->Iterate();
+void GameObject::TriggerComponents() {
+    this->ClearDrawables();
+    for(int i = 0; i < this->components.size();i++){
+        this->components[i]->Trigger();
+        this->AppendDrawables(this->components[i]->GetDrawables());
+    }
+}
+
+// PRIVATES
+void GameObject::AppendDrawables(vector<Transformable*> drawables){
+    if (drawables.size() < 1) { return; }
+    this->drawable_components.insert(this->drawable_components.end(), drawables.begin(), drawables.end());
 }
