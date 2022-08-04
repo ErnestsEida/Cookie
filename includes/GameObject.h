@@ -4,8 +4,6 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "Component.hpp"
-#include "SpriteRenderer.hpp"
-#include "GameShape.hpp"
 
 using namespace std;
 using namespace sf;

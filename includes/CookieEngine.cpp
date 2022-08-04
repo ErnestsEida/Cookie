@@ -10,6 +10,7 @@
 
 // Cookie Includes
 #include "./GameObject.cpp"
+#include "./Camera.hpp"
 
 using namespace sf;
 using namespace std;
@@ -18,12 +19,21 @@ class CookieEngine {
 private:
     RenderWindow app;
     bool window_initialized = false;
+    Camera* mainCamera;
 public:
     void InitWindow(int width, int height, string title){
         ContextSettings settings;
         settings.antialiasingLevel = 16;
         app.create(VideoMode(width, height), title, Style::Default, settings);
         window_initialized = true;
+        Camera* camera = new Camera(width, height);
+        camera->SetCenter(width/2, height/2);
+        this->mainCamera = camera;
+        this->app.setView(*this->mainCamera->GetView());
+    }
+
+    Camera* GetMainCamera() const {
+        return this->mainCamera;
     }
 
     void Run(){
@@ -35,6 +45,7 @@ public:
 
         vector<Transformable*> holder;
         while(app.isOpen()){
+            this->app.setView(*this->mainCamera->GetView());
             Event event;
             if (app.pollEvent(event)){
                 if (event.type == Event::Closed)
@@ -46,9 +57,9 @@ public:
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE
                 gameobjects[i]->TriggerComponents();
-                gameobjects[i]->Update();
                 gameobjects[i]->FindCollision();
                 gameobjects[i]->SyncComponents();
+                gameobjects[i]->Update();
                 // -------------
                 holder = gameobjects[i]->GetDrawables();
                 all_drawables.insert(all_drawables.end(), holder.begin(), holder.end());
