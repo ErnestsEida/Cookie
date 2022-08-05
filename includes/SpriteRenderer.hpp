@@ -15,14 +15,21 @@ private:
     float frame_speed;
     Clock clock;
     Animation* animation;
+    Vector2f scale;
 public:
     SpriteRenderer(){ // SETS SPRITE COUNT TO NULL TO ALLOW GAMEOBJECT TO CALL ITERATE() WITHOUT ANY SPRITES GIVEN
         this->animation = NULL;
+        this->scale = Vector2f(1, 1);
     }
 
     // SETTERS
     void SetFramespeed(float frame_speed){
         this->frame_speed = frame_speed;
+    }
+
+    void SetScale(float scale_x, float scale_y) {
+        this->scale = Vector2f(scale_x, scale_y);
+        this->animation->SetSpriteScale(this->scale);
     }
 
     void SetAnimation(Animation* animation){

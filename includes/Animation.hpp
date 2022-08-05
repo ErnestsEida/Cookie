@@ -29,6 +29,10 @@ public:
         return this->sprite_count;
     }
 
+    void SetSpriteScale(Vector2f scale) {
+        this->sprite->setScale(scale);
+    }
+
     void NextSprite() {
         IntRect textureRect = this->sprite->getTextureRect();
         if (textureRect.left + this->width >= (this->sprite_count + this->width)){

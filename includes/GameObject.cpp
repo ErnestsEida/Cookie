@@ -95,6 +95,10 @@ FloatRect* GameObject::Get_Collider() const {
     return this->collider;
 }
 
+Vector2f GameObject::Get_Origin() const {
+    return this->origin;
+}
+
 // SETTERS
 void GameObject::Set_X(int x) {
     this->x = x;
@@ -124,6 +128,11 @@ void GameObject::Set_Component(Component* component) {
     this->components.push_back(component);
 }
 
+void GameObject::Set_Origin(float origin_x, float origin_y){
+    this->origin = Vector2f(origin_x, origin_y);
+    this->ApplyDrawableOrigin();
+}
+
 // MISCELANEOUS
 void GameObject::InsertNewObject(GameObject* object) {
     GameObject::object_vector.push_back(object);
@@ -144,7 +153,10 @@ void GameObject::SyncComponents() {
     for(int i = 0; i < this->drawable_components.size();i++){
         this->drawable_components[i]->setPosition(this->x, this->y);
     }
-    this->collider = new FloatRect(this->x, this->y, this->collider->width, this->collider->height);
+    this->ApplyDrawableOrigin();
+    float newX = this->x - this->origin.x;
+    float newY = this->y - this->origin.y;
+    this->UpdateCollider(newX, newY);
 }
 
 void GameObject::FindCollision() {
@@ -171,4 +183,15 @@ void GameObject::TriggerComponents() {
 void GameObject::AppendDrawables(vector<Transformable*> drawables){
     if (drawables.size() < 1) { return; }
     this->drawable_components.insert(this->drawable_components.end(), drawables.begin(), drawables.end());
+}
+
+void GameObject::ApplyDrawableOrigin() {
+    for(int i = 0;i < this->drawable_components.size(); i++){
+        this->drawable_components[i]->setOrigin(this->origin);
+    }
+}
+
+void GameObject::UpdateCollider(float left, float top) {
+    this->collider->left = left;
+    this->collider->top = top;
 }

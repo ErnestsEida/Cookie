@@ -53,12 +53,15 @@ public:
             }
             vector<GameObject*> gameobjects = GameObject::object_vector;
             vector<Transformable*> all_drawables;
-            // GAMEOBJECT UPDATE AND STORAGE UPDATES
+            // UI UPDATE
+            
+
+            // GAMEOBJECT UPDATE
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE
                 gameobjects[i]->TriggerComponents();
-                gameobjects[i]->FindCollision();
                 gameobjects[i]->SyncComponents();
+                gameobjects[i]->FindCollision();
                 gameobjects[i]->Update();
                 // -------------
                 holder = gameobjects[i]->GetDrawables();

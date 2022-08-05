@@ -15,8 +15,12 @@ private:
     string tag;
     vector<Component*> components;
     vector<Transformable*> drawable_components;
-    sf::FloatRect* collider;
+    sf::FloatRect* collider = NULL;
+    Vector2f origin = Vector2f(0, 0);
+
     void AppendDrawables(vector<Transformable*>);
+    void ApplyDrawableOrigin();
+    void UpdateCollider(float, float);
 public:
     // STATIC VARIABLES
     static int object_count;
@@ -37,6 +41,7 @@ public:
     string Get_Tag() const;
     vector<Transformable*> GetDrawables() const;
     FloatRect* Get_Collider() const;
+    Vector2f Get_Origin() const;
 
     // SETTERS
     void Set_X(int);
@@ -46,6 +51,7 @@ public:
     void Set_Tag(string);
     void Set_Collider(float, float);
     void Set_Component(Component*);
+    void Set_Origin(float, float);
 
     // MISCELANEOUS
     void InsertNewObject(GameObject*);
