@@ -54,8 +54,6 @@ public:
             vector<GameObject*> gameobjects = GameObject::object_vector;
             vector<Transformable*> all_drawables;
             // UI UPDATE
-            
-
             // GAMEOBJECT UPDATE
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE

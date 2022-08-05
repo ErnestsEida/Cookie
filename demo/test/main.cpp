@@ -1,7 +1,6 @@
 #include <iostream>
 #include "../../includes/CookieEngine.cpp"
 #include "../../includes/Components.hpp"
-#include "../../includes/UIObject.hpp"
 
 using namespace std;
 
