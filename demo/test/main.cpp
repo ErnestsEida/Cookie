@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../../includes/CookieEngine.cpp"
 #include "../../includes/Components.hpp"
+#include "../../includes/UIComponents.hpp"
 
 using namespace std;
 
@@ -73,6 +74,8 @@ public:
 
 int main()
 {
+    UIButton button(720, 360);
+
     CookieEngine engine;
     engine.InitWindow(1280, 720, "Test Title");
 

@@ -10,6 +10,7 @@
 
 // Cookie Includes
 #include "./GameObject.cpp"
+#include "./UIComponents.hpp"
 #include "./Camera.hpp"
 
 using namespace sf;
@@ -44,6 +45,9 @@ public:
         app.setFramerateLimit(60);
 
         vector<Transformable*> holder;
+        vector<GameObject*> gameobjects;
+        vector<UIObject*> ui_objects;
+        vector<Transformable*> all_drawables;
         while(app.isOpen()){
             this->app.setView(*this->mainCamera->GetView());
             Event event;
@@ -51,9 +55,14 @@ public:
                 if (event.type == Event::Closed)
                     app.close();
             }
-            vector<GameObject*> gameobjects = GameObject::object_vector;
-            vector<Transformable*> all_drawables;
+            gameobjects = GameObject::object_vector;
+            ui_objects = UIObject::objects;
             // UI UPDATE
+            for(int i = 0;i < ui_objects.size();i++) {
+                ui_objects[i]->Update();
+                holder = ui_objects[i]->GetDrawables();
+                all_drawables.insert(all_drawables.end(), holder.begin(), holder.end());
+            }
             // GAMEOBJECT UPDATE
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE
@@ -71,6 +80,7 @@ public:
                 app.draw(*dynamic_cast<Drawable*>(all_drawables[i]));
             }
             app.display();
+            all_drawables.clear();
         }
     }
 };
