@@ -9,6 +9,7 @@ using namespace sf;
 
 class UIObject {
 private:
+    int constant_x, constant_y;
     int x, y, z;
     vector<Transformable*> drawables;
     bool mouse_inside = false;
@@ -24,7 +25,8 @@ public:
 
     vector<Transformable*> GetDrawables() const;
 
-    void Update();
+    void Update(RenderWindow* window);
+    void SyncDrawables(int relative_x, int relative_y);
 
     virtual void MouseOnEnter() = 0;
     virtual void MouseOnHover() = 0;

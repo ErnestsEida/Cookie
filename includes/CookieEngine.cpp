@@ -57,12 +57,6 @@ public:
             }
             gameobjects = GameObject::object_vector;
             ui_objects = UIObject::objects;
-            // UI UPDATE
-            for(int i = 0;i < ui_objects.size();i++) {
-                ui_objects[i]->Update();
-                holder = ui_objects[i]->GetDrawables();
-                all_drawables.insert(all_drawables.end(), holder.begin(), holder.end());
-            }
             // GAMEOBJECT UPDATE
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE
@@ -74,7 +68,12 @@ public:
                 holder = gameobjects[i]->GetDrawables();
                 all_drawables.insert(all_drawables.end(), holder.begin(), holder.end());
             }
-
+            // UI UPDATE
+            for(int i = 0;i < ui_objects.size();i++) {
+                ui_objects[i]->Update(&app);
+                holder = ui_objects[i]->GetDrawables();
+                all_drawables.insert(all_drawables.end(), holder.begin(), holder.end());
+            }
             app.clear();
             for(int i = 0;i < all_drawables.size();i++){
                 app.draw(*dynamic_cast<Drawable*>(all_drawables[i]));

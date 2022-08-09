@@ -74,12 +74,12 @@ public:
 
 int main()
 {
-    UIButton button(720, 360);
+    UIButton button(0, 0);
 
     CookieEngine engine;
     engine.InitWindow(1280, 720, "Test Title");
 
-    Player player(10, 10, engine.GetMainCamera());
+    Player player(0, 0, engine.GetMainCamera());
     player.Set_Origin(24, 21);
     player.Set_Collider(48, 48);
 
