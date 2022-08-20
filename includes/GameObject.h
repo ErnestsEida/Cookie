@@ -34,24 +34,24 @@ public:
     GameObject(int x, int y, int z, string object_name, string tag);
 
     // GETTERS
-    int Get_X() const;
-    int Get_Y() const;
-    int Get_Z() const;
-    string Get_ObjectName() const;
-    string Get_Tag() const;
+    int GetX() const;
+    int GetY() const;
+    int GetZ() const;
+    string GetObjectName() const;
+    string GetTag() const;
     vector<Transformable*> GetDrawables() const;
     FloatRect* Get_Collider() const;
     Vector2f Get_Origin() const;
 
     // SETTERS
-    void Set_X(int);
-    void Set_Y(int);
-    void Set_Z(int);
-    void Set_ObjectName(string);
-    void Set_Tag(string);
-    void Set_Collider(float, float);
-    void Set_Component(Component*);
-    void Set_Origin(float, float);
+    void SetX(int);
+    void SetY(int);
+    void SetZ(int);
+    void SetObjectName(string);
+    void SetTag(string);
+    void SetCollider(float, float);
+    void SetComponent(Component*);
+    void SetOrigin(float, float);
 
     // MISCELANEOUS
     void InsertNewObject(GameObject*);

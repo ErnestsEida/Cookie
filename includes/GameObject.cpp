@@ -67,23 +67,23 @@ GameObject::GameObject(int x, int y, int z, string object_name, string tag) {
 }
 
 // GETTERS
-int GameObject::Get_X() const {
+int GameObject::GetX() const {
     return this->x;
 }
 
-int GameObject::Get_Y() const {
+int GameObject::GetY() const {
     return this->y;
 }
 
-int GameObject::Get_Z() const {
+int GameObject::GetZ() const {
     return this->z;
 }
 
-string GameObject::Get_ObjectName() const {
+string GameObject::GetObjectName() const {
     return this->object_name;
 }
 
-string GameObject::Get_Tag() const {
+string GameObject::GetTag() const {
     return this->tag;
 }
 
@@ -100,35 +100,35 @@ Vector2f GameObject::Get_Origin() const {
 }
 
 // SETTERS
-void GameObject::Set_X(int x) {
+void GameObject::SetX(int x) {
     this->x = x;
 }
 
-void GameObject::Set_Y(int y) {
+void GameObject::SetY(int y) {
     this->y = y;
 }
 
-void GameObject::Set_Z(int z) {
+void GameObject::SetZ(int z) {
     this->z = z;
 }
 
-void GameObject::Set_ObjectName(string object_name) {
+void GameObject::SetObjectName(string object_name) {
     this->object_name = object_name;
 }
 
-void GameObject::Set_Tag(string tag) {
+void GameObject::SetTag(string tag) {
     this->tag = tag;
 }
 
-void GameObject::Set_Collider(float width, float height) {
+void GameObject::SetCollider(float width, float height) {
     this->collider = new FloatRect(this->x, this->y, width, height);
 }
 
-void GameObject::Set_Component(Component* component) {
+void GameObject::SetComponent(Component* component) {
     this->components.push_back(component);
 }
 
-void GameObject::Set_Origin(float origin_x, float origin_y){
+void GameObject::SetOrigin(float origin_x, float origin_y){
     this->origin = Vector2f(origin_x, origin_y);
     this->ApplyDrawableOrigin();
 }
