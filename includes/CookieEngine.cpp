@@ -10,7 +10,6 @@
 
 // Cookie Includes
 #include "./GameObject.cpp"
-#include "./UIComponents.hpp"
 #include "./Camera.hpp"
 
 using namespace sf;
@@ -46,7 +45,6 @@ public:
 
         vector<Transformable*> holder;
         vector<GameObject*> gameobjects;
-        vector<UIObject*> ui_objects;
         vector<Transformable*> all_drawables;
         while(app.isOpen()){
             this->app.setView(*this->mainCamera->GetView());
@@ -56,7 +54,6 @@ public:
                     app.close();
             }
             gameobjects = GameObject::object_vector;
-            ui_objects = UIObject::objects;
             // GAMEOBJECT UPDATE
             for(int i = 0;i < gameobjects.size();i++) {
                 // SYNC AND UPDATE
@@ -66,12 +63,6 @@ public:
                 gameobjects[i]->Update();
                 // -------------
                 holder = gameobjects[i]->GetDrawables();
-                all_drawables.insert(all_drawables.end(), holder.begin(), holder.end());
-            }
-            // UI UPDATE
-            for(int i = 0;i < ui_objects.size();i++) {
-                ui_objects[i]->Update(&app);
-                holder = ui_objects[i]->GetDrawables();
                 all_drawables.insert(all_drawables.end(), holder.begin(), holder.end());
             }
             app.clear();
