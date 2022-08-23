@@ -1,4 +1,4 @@
-# Cookie - V1
+# Cookie - V2
 Cookie is a **GAME ENGINE** made fully in C++ on top of SFML graphics library
 ## Table of contents
 1. [Prerequisites](#prerequisites)
