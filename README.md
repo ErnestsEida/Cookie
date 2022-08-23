@@ -1,13 +1,13 @@
 # Cookie - V1
 Cookie is a **GAME ENGINE** made fully in C++ on top of SFML graphics library
 ## Table of contents
-1. [Prerequisites](https://github.com/ErnestsEida/Cookie/edit/master/README.md#prerequisites)
+1. [Prerequisites](#prerequisites)
 
-   - [Linux](https://github.com/ErnestsEida/Cookie/edit/master/README.md#linux)
-   - [Windows](https://github.com/ErnestsEida/Cookie/edit/master/README.md#windows)
-   - [MacOS](https://github.com/ErnestsEida/Cookie/edit/master/README.md#windows)
+   - [Linux](#linux)
+   - [Windows](#windows)
+   - [MacOS](#windows)
 
-2. [Building your first game](https://github.com/ErnestsEida/Cookie/edit/master/README.md#building-your-first-game)
+2. [Building your first game](#building-your-first-game)
 3. [Classes](#classes)
 
 ## Prerequisites
@@ -54,10 +54,15 @@ Creating GameObjects on screen can be done anywhere before `engine.Run()` call
 #### Methods
 |Type | Name | Accessability |
 |:---:|:-----|:-------------:|
-| --- | [Constructors](https://github.com/ErnestsEida/Cookie/edit/master/README.md#constructors) | Public |
-| int | [GetX]() | Public |
-| int | [GetY]() | Public |
-| int | [GetZ]() | Public |
-| string | [GetObjectName]() | Public |
+| --- | [Constructors](#constructors) | Public |
+| int | [GetX](#gameobjectgetx) | Public |
+| int | [GetY](#gameobjectgety) | Public |
+| int | [GetZ](#gameobjectgetz) | Public |
+| string | [GetObjectName](#gameobjectgetobjectname) | Public |
 
 #### Constructors
+
+#### GameObject::GetX()
+#### GameObject::GetY()
+#### GameObject::GetZ()
+#### GameObject::GetObjectName()
