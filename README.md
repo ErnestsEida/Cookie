@@ -8,7 +8,7 @@ Cookie is a **GAME ENGINE** made fully in C++ on top of SFML graphics library
    - [MacOS](https://github.com/ErnestsEida/Cookie/edit/master/README.md#windows)
 
 2. [Building your first game](https://github.com/ErnestsEida/Cookie/edit/master/README.md#building-your-first-game)
-3. [Classes](https://github.com/ErnestsEida/Cookie/edit/master/README.md#classes)
+3. [Classes](#classes)
 
 ## Prerequisites
 
