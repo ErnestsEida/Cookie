@@ -49,20 +49,3 @@ int main(){
 Creating GameObjects on screen can be done anywhere before `engine.Run()` call
 
 ## Classes
-
-### GameObject
-#### Methods
-|Type | Name | Accessability |
-|:---:|:-----|:-------------:|
-| --- | [Constructors](#constructors) | Public |
-| int | [GetX](#gameobjectgetx) | Public |
-| int | [GetY](#gameobjectgety) | Public |
-| int | [GetZ](#gameobjectgetz) | Public |
-| string | [GetObjectName](#gameobjectgetobjectname) | Public |
-
-#### Constructors
-
-#### GameObject::GetX()
-#### GameObject::GetY()
-#### GameObject::GetZ()
-#### GameObject::GetObjectName()
