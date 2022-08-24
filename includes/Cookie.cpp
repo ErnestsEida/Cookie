@@ -77,19 +77,14 @@ public:
 
             GameObject::SortObjectsByZ();
             all_gameobjects = GameObject::getAllObjects();
-            parent_gameobjects = GameObject::getParentObjects();
 
             // UPDATE ALL GAMEOBJECTS AND UPLOAD DRAWABLES
             for(int i = 0; i < all_gameobjects.size(); i++){
                 all_gameobjects[i]->OnUpdate();
+                all_gameobjects[i]->UpdateChildren();
                 all_gameobjects[i]->UpdateComponents();
                 vector<Drawable*> object_drawables = all_gameobjects[i]->getDrawables();
                 all_drawables.insert(all_drawables.end(), object_drawables.begin(), object_drawables.end());
-            }
-
-            // SYNC CHILDREN WITH THEIR PARENTS
-            for(int i = 0;i < parent_gameobjects.size();i++){
-                parent_gameobjects[i]->UpdateChildren();
             }
 
             this->window->clear();

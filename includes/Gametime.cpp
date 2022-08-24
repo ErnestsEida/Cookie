@@ -1,8 +1,3 @@
-#pragma once
+#include "Gametime.hpp"
 
-using namespace std;
-
-class Gametime {
-public:
-    static float deltaTime;
-};
+float Gametime::deltaTime = 0;

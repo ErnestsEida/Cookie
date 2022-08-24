@@ -15,8 +15,8 @@ protected:
     void childUpdate() {
         Vector2i currentPos = Vector2i(this->x, this->y);
         Vector2i newPos = Vector2i(this->parent->getX() + this->mirrorX, this->parent->getY() + this->mirrorY);
-        this->x = newPos.x - currentPos.x;
-        this->y = newPos.y - currentPos.y;
+        this->x += (newPos.x - currentPos.x);
+        this->y += (newPos.y - currentPos.y);
     }
     void changeIsChild(bool value) { this->isChild = value; }
 private:
@@ -70,8 +70,6 @@ public:
     // ADDING
     void addChild(GameObject* child) {
         child->changeIsChild(true);
-        child->setY(this->y + child->getY());
-        child->setX(this->x + child->getX());
         child->setParent(this);
         this->children.push_back(child); 
     }

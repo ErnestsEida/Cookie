@@ -1,5 +1,6 @@
 #include "includes/Cookie.cpp"
 #include "demo/Player.hpp"
+#include "demo/Child.hpp"
 
 int main(){
     Cookie c;
