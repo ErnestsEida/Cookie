@@ -9,7 +9,9 @@ vector<GameObject*> GameObject::objects;
 
 GameObject::GameObject(int x, int y) {
     this->x = x;
+    this->mirrorX = x;
     this->y = y;
+    this->mirrorY = y;
     this->z = DEFAULT_Z;
     this->objectName = DEFAULT_OBJECT_NAME + to_string(GameObject::objectCount);
     this->tag = DEFAULT_TAG;
@@ -19,7 +21,9 @@ GameObject::GameObject(int x, int y) {
 
 GameObject::GameObject(int x, int y, float z) {
     this->x = x;
+    this->mirrorX = x;
     this->y = y;
+    this->mirrorY = y;
     this->z = z;
     this->objectName = DEFAULT_OBJECT_NAME + to_string(GameObject::objectCount);
     this->tag = DEFAULT_TAG;
@@ -29,7 +33,9 @@ GameObject::GameObject(int x, int y, float z) {
 
 GameObject::GameObject(int x, int y, float z, string objectName) {
     this->x = x;
+    this->mirrorX = x;
     this->y = y;
+    this->mirrorY = y;
     this->z = DEFAULT_Z;
     this->objectName = objectName;
     this->tag = DEFAULT_TAG;
@@ -39,7 +45,9 @@ GameObject::GameObject(int x, int y, float z, string objectName) {
 
 GameObject::GameObject(int x, int y, float z, string objectName, string tag) {
     this->x = x;
+    this->mirrorX = x;
     this->y = y;
+    this->mirrorY = y;
     this->z = DEFAULT_Z;
     this->objectName = objectName;
     this->tag = tag;
@@ -48,5 +56,36 @@ GameObject::GameObject(int x, int y, float z, string objectName, string tag) {
 }
 
 void GameObject::SortObjectsByZ() {
-    // SORT ALL GAMEOBJECTS BY THEIR Z INDEX
+    int iterations = 1;
+    while(iterations > 0){
+        iterations = 0;
+        for(int i = 0; i < GameObject::objects.size(); i++){
+            if (i == GameObject::objects.size() - 1) continue;
+
+            if (GameObject::objects.at(i)->getZ() > GameObject::objects.at(i+1)->getZ()){
+                iter_swap(GameObject::objects.begin() + i, GameObject::objects.begin() + (i+1));
+                iterations++;
+            }
+        }
+    }
+}
+
+vector<GameObject*> GameObject::getAllObjects() {
+    return GameObject::objects;
+}
+
+vector<GameObject*> GameObject::getParentObjects() {
+    vector<GameObject*> result;
+    for(int i = 0; i < GameObject::objects.size(); i++){
+        if (!GameObject::objects[i]->isChild) result.push_back(GameObject::objects[i]);
+    }
+    return result;
+}
+
+vector<GameObject*> GameObject::getChildObjects() {
+    vector<GameObject*> result;
+    for(int i = 0; i < GameObject::objects.size(); i++){
+        if (GameObject::objects[i]->isChild) result.push_back(GameObject::objects[i]);
+    }
+    return result;
 }
