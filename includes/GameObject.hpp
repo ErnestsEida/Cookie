@@ -20,7 +20,7 @@ protected:
     }
     void changeIsChild(bool value) { this->isChild = value; }
 private:
-    int x, y, mirrorX, mirrorY;
+    float x, y, mirrorX, mirrorY;
     float z;
     string objectName, tag;
     IntRect collider;
@@ -40,17 +40,17 @@ public:
     static void SortObjectsByZ();
 
     // CONSTRUCTORS
-    GameObject(int x, int y);
+    GameObject(float x, float y);
     
-    GameObject(int x, int y, float z);
+    GameObject(float x, float y, float z);
     
-    GameObject(int x, int y, float z, string objectName);
+    GameObject(float x, float y, float z, string objectName);
     
-    GameObject(int x, int y, float z, string objectName, string tag);
+    GameObject(float x, float y, float z, string objectName, string tag);
 
     // GETTERS
-    int getX() const { return this->x; }
-    int getY() const { return this->y; }
+    float getX() const { return this->x; }
+    float getY() const { return this->y; }
     float getZ() const { return this->z; }
     string getObjectName() const { return this->objectName; }
     string getTag() const { return this->tag; }
@@ -59,9 +59,9 @@ public:
     IntRect getCollider() const { return this->collider; }
 
     // SETTERS
-    void setX(int x) { this->x = x; this->mirrorX = x; }
-    void setY(int y) { this->y = y; this->mirrorY = y; }
-    void setZ(int z) { this->z = z; }
+    void setX(float x) { this->x = x; this->mirrorX = x; }
+    void setY(float y) { this->y = y; this->mirrorY = y; }
+    void setZ(float z) { this->z = z; }
     void setObjectName(string objectName) { this->objectName = objectName; }
     void setTag(string tag) { this->tag = tag; }
     void setChildren(vector<GameObject*> children) { this->children = children; }

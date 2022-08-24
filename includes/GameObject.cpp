@@ -7,7 +7,7 @@ const string DEFAULT_TAG = "none";
 int GameObject::objectCount = 0;
 vector<GameObject*> GameObject::objects;
 
-GameObject::GameObject(int x, int y) {
+GameObject::GameObject(float x, float y) {
     this->x = x;
     this->mirrorX = x;
     this->y = y;
@@ -19,7 +19,7 @@ GameObject::GameObject(int x, int y) {
     GameObject::objects.push_back(this);
 }
 
-GameObject::GameObject(int x, int y, float z) {
+GameObject::GameObject(float x, float y, float z) {
     this->x = x;
     this->mirrorX = x;
     this->y = y;
@@ -31,7 +31,7 @@ GameObject::GameObject(int x, int y, float z) {
     GameObject::objects.push_back(this);
 }
 
-GameObject::GameObject(int x, int y, float z, string objectName) {
+GameObject::GameObject(float x, float y, float z, string objectName) {
     this->x = x;
     this->mirrorX = x;
     this->y = y;
@@ -43,7 +43,7 @@ GameObject::GameObject(int x, int y, float z, string objectName) {
     GameObject::objects.push_back(this);
 }
 
-GameObject::GameObject(int x, int y, float z, string objectName, string tag) {
+GameObject::GameObject(float x, float y, float z, string objectName, string tag) {
     this->x = x;
     this->mirrorX = x;
     this->y = y;
