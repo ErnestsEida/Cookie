@@ -52,17 +52,12 @@ Creating GameObjects on screen can be done anywhere before `engine.Run()` call
 
 ### GameObject
 #### Methods
-|Type | Name | Accessability |
-|:---:|:-----|:-------------:|
-| --- | [Constructors](#constructors) | Public |
-| int | [GetX](#gameobjectgetx) | Public |
-| int | [GetY](#gameobjectgety) | Public |
-| int | [GetZ](#gameobjectgetz) | Public |
-| string | [GetObjectName](#gameobjectgetobjectname) | Public |
-
-#### Constructors
-
-#### GameObject::GetX()
-#### GameObject::GetY()
-#### GameObject::GetZ()
-#### GameObject::GetObjectName()
+|Type | Accessability | Name | Description |
+|:---|:-----:|:-------------|:------------|
+| int | public | GetX | Return value of gameobjects x coordinate |
+| int | public | GetY | Return value of gameobjects y coordinate |
+| int | public | GetZ | Return value of gameobjects z index |
+| string | public | GetObjectName | Return gameobjects name |
+| string | public | GetTag | Return gameobjects tag |
+| vector<Drawables*> | public | GetDrawables | Returns all drawable parts of gameobject |
+| FloatRect* | public | Get_Collider | Returns gameobjects collider as Float rectangle |
