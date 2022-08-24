@@ -8,10 +8,12 @@
 
 // STD Includes
 #include <iostream>
+#include <chrono>
 
 // Engine
 #include "Alerts.cpp"
 #include "GameObject.cpp"
+#include "Gametime.cpp"
 
 using namespace sf;
 using namespace std;
@@ -54,12 +56,20 @@ public:
             return ;
         }
 
+        auto tp1 = chrono::system_clock::now();
+	    auto tp2 = chrono::system_clock::now();
+
         vector<GameObject*> all_gameobjects;
         vector<GameObject*> parent_gameobjects;
         vector<Drawable*> all_drawables;
         while(this->window->isOpen()){
             if (this->closeWindowFlag) this->window->close();
             
+            tp2 = chrono::system_clock::now();
+		    chrono::duration<float> elapsedTime = tp2 - tp1;
+		    tp1 = tp2;
+		    Gametime::deltaTime = elapsedTime.count();
+
             Event event;
             while(this->window->pollEvent(event)){
                 if (event.type == Event::Closed) this->window->close();
