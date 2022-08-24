@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Alerts.cpp"
+#include "Collider.hpp"
 
 using namespace sf;
 using namespace std;
@@ -20,16 +21,18 @@ protected:
         this->UpdateComponents();
     }
     void changeIsChild(bool value) { this->isChild = value; }
+
 private:
     float x, y, mirrorX, mirrorY;
     float z;
     string objectName, tag;
-    IntRect collider;
+    Collider* collider;
     bool isChild = false;
     GameObject* parent = NULL;
 
     vector<GameObject*> children;
     vector<Drawable*> drawables;
+
 public:
     // STATIC
     static int objectCount;
@@ -57,7 +60,7 @@ public:
     string getTag() const { return this->tag; }
     vector<GameObject*> getChildren() { return this->children; }
     vector<Drawable*> getDrawables() const { return this->drawables; }
-    IntRect getCollider() const { return this->collider; }
+    Collider* getCollider() const { return this->collider; }
 
     // SETTERS
     void setX(float x) { this->x = x; this->mirrorX = x; }
@@ -66,13 +69,13 @@ public:
     void setObjectName(string objectName) { this->objectName = objectName; }
     void setTag(string tag) { this->tag = tag; }
     void setChildren(vector<GameObject*> children) { this->children = children; }
-    void setCollider(int width, int height) { this->collider = IntRect(this->x, this->y, width, height); }
+    void setCollider(float width, float height) { this->collider = new Collider(width, height); }
 
     // ADDING
     void addChild(GameObject* child) {
         child->changeIsChild(true);
         child->setParent(this);
-        this->children.push_back(child); 
+        this->children.push_back(child);
     }
     void addDrawable(Drawable* drawable) { this->drawables.push_back(drawable); }
 
@@ -91,11 +94,10 @@ public:
             asTransformable->setPosition(this->x, this->y);
         }
 
-        this->collider.left = this->x;
-        this->collider.top = this->y;
+        this->collider->setPosition(this->x, this->y);
     }
 
     // Virtual
-    virtual void OnStart() = 0;
+    virtual void OnStart() = 0; // NOT IMPLEMENTED
     virtual void OnUpdate() = 0;
 };

@@ -90,6 +90,7 @@ public:
             this->window->clear();
 
             for(int i = 0;i < all_drawables.size();i++){
+                if (all_drawables[i] == nullptr) continue;
                 this->window->draw(*all_drawables[i]);
             }
 

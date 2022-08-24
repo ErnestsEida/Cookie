@@ -15,6 +15,7 @@ GameObject::GameObject(float x, float y) {
     this->z = DEFAULT_Z;
     this->objectName = DEFAULT_OBJECT_NAME + to_string(GameObject::objectCount);
     this->tag = DEFAULT_TAG;
+    this->collider = new Collider();
     GameObject::objectCount++;
     GameObject::objects.push_back(this);
 }
@@ -27,6 +28,7 @@ GameObject::GameObject(float x, float y, float z) {
     this->z = z;
     this->objectName = DEFAULT_OBJECT_NAME + to_string(GameObject::objectCount);
     this->tag = DEFAULT_TAG;
+    this->collider = new Collider();
     GameObject::objectCount++;
     GameObject::objects.push_back(this);
 }
@@ -39,6 +41,7 @@ GameObject::GameObject(float x, float y, float z, string objectName) {
     this->z = DEFAULT_Z;
     this->objectName = objectName;
     this->tag = DEFAULT_TAG;
+    this->collider = new Collider();
     GameObject::objectCount++;
     GameObject::objects.push_back(this);
 }
@@ -51,6 +54,7 @@ GameObject::GameObject(float x, float y, float z, string objectName, string tag)
     this->z = DEFAULT_Z;
     this->objectName = objectName;
     this->tag = tag;
+    this->collider = new Collider();
     GameObject::objectCount++;
     GameObject::objects.push_back(this);
 }
