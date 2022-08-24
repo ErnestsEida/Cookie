@@ -17,6 +17,7 @@ protected:
         Vector2i newPos = Vector2i(this->parent->getX() + this->mirrorX, this->parent->getY() + this->mirrorY);
         this->x += (newPos.x - currentPos.x);
         this->y += (newPos.y - currentPos.y);
+        this->UpdateComponents();
     }
     void changeIsChild(bool value) { this->isChild = value; }
 private:
@@ -80,6 +81,7 @@ public:
         for(int i = 0; i < this->children.size(); i++){
             this->children[i]->childUpdate();
         }
+        this->UpdateComponents();
     }
 
     void UpdateComponents() {
