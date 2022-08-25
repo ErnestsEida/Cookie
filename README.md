@@ -25,20 +25,20 @@ brew install sfml
 
 ## Building your first game
 **STEP 1:** Create a main.cpp that will hold the game main loop  
-**STEP 2:** include `CookieEngine.cpp` file into file created earlier  
+**STEP 2:** include `Cookie.cpp` file into file created earlier  
 **STEP 3:** Initialize Engines window ( without initialization you won't be able to run the game ):
 ```cpp
-#include "{path_to_includes}/CookieEngine.cpp";
+#include "{path_to_includes}/Cookie.cpp";
 #include <iostream>
 
 using namespace std;
 
 int main(){
   // Create a new instance of engine
-  CookieEngine engine;
+  Cookie engine;
   
   // Initialize window
-  engine.InitWindow(1280, 720, "Game Window");
+  engine.CreateWindow(1280, 720, "Game Window");
   
   // Run to show game window
   engine.Run();
@@ -49,20 +49,3 @@ int main(){
 Creating GameObjects on screen can be done anywhere before `engine.Run()` call
 
 ## Classes
-
-### GameObject
-#### Methods
-|Type | Name | Accessability |
-|:---:|:-----|:-------------:|
-| --- | [Constructors](#constructors) | Public |
-| int | [GetX](#gameobjectgetx) | Public |
-| int | [GetY](#gameobjectgety) | Public |
-| int | [GetZ](#gameobjectgetz) | Public |
-| string | [GetObjectName](#gameobjectgetobjectname) | Public |
-
-#### Constructors
-
-#### GameObject::GetX()
-#### GameObject::GetY()
-#### GameObject::GetZ()
-#### GameObject::GetObjectName()
