@@ -9,6 +9,7 @@ class Collider {
 private:
     FloatRect* area;
     float width, height;
+    void* holder;
 public:
     Collider(float width = 1.0f, float height = 1.0f) {
         this->width = width;
@@ -21,6 +22,9 @@ public:
         this->area->top = y;
     }
 
+    void setHolder(void* holder) { this->holder = holder; }
+
+    void* getHolder() { return this->holder; }
     FloatRect* getArea() { return this->area; }
     float bottom() { return this->area->top + height; }
     float right() { return this->area->left + width; }

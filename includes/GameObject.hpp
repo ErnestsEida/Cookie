@@ -69,7 +69,10 @@ public:
     void setObjectName(string objectName) { this->objectName = objectName; }
     void setTag(string tag) { this->tag = tag; }
     void setChildren(vector<GameObject*> children) { this->children = children; }
-    void setCollider(float width, float height) { this->collider = new Collider(width, height); }
+    void setCollider(float width, float height) { 
+        this->collider = new Collider(width, height);
+        this->collider->setHolder(this);
+    }
 
     // ADDING
     void addChild(GameObject* child) {
@@ -80,6 +83,35 @@ public:
     void addDrawable(Drawable* drawable) { this->drawables.push_back(drawable); }
 
     // MISC
+    GameObject* isColliding(string collision_tag = "") {
+        vector<GameObject*> gameobjects = GameObject::objects;
+        for(int i = 0;i < gameobjects.size(); i++) {
+            if (gameobjects[i] != this && (gameobjects[i]->getTag() == collision_tag || collision_tag == "")) {
+                if (this->collider->getArea()->intersects(*gameobjects[i]->getCollider()->getArea())){
+                    return gameobjects[i];
+                }
+            }
+        }
+        return NULL;
+    }
+
+    static GameObject* isCollidingAtPoint(float x, float y, string collision_tag = "") {
+        vector<GameObject*> gameobjects = GameObject::objects;
+        for(int i = 0; i < gameobjects.size(); i++){
+            if (collision_tag == gameobjects[i]->getTag() || collision_tag == ""){
+                if (gameobjects[i]->getCollider()->getArea()->contains(x, y)) {
+                    return gameobjects[i];
+                }
+            }
+        }
+        return NULL;
+    }
+
+    void Move(float x, float y) {
+        this->x += x;
+        this->y += y;
+    }
+
     void UpdateChildren() {
         for(int i = 0; i < this->children.size(); i++){
             this->children[i]->childUpdate();
