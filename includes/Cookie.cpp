@@ -95,6 +95,8 @@ public:
             }
 
             this->window->display();
+
+            all_drawables.clear();
         }
     }
 };
