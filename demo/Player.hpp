@@ -3,6 +3,7 @@
 #include "../includes/GameObject.hpp"
 #include "../includes/Gametime.hpp"
 #include "Child.hpp"
+#include "../includes/GraphicsRenderer.hpp"
 
 class Player : public GameObject {
 private:
@@ -13,11 +14,10 @@ private:
 public:
     Player(int x, int y) : GameObject(x, y) {
         this->setCollider(50, 50);
-        RectangleShape *shape = new RectangleShape(Vector2f(50, 50));
-        this->addDrawable(shape);
-
-        Child *c = new Child(100, 100);
-        this->addChild(c);
+        GraphicsRenderer* renderer = new GraphicsRenderer(25, 25);
+        renderer->addShape(ShapeType::Rectangle, 50, 50);
+        renderer->setDrawableOrigin(25, 25);
+        this->addChild(renderer);
     }
 
     void OnStart() {}

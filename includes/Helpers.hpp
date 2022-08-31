@@ -1,3 +1,5 @@
+#pragma once
+
 #include "GameObject.hpp"
 
 class Helpers {
@@ -16,7 +18,7 @@ public:
                 }
             }
         }
-        
+
         return objects;
     }
 };
