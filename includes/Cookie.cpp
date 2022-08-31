@@ -14,6 +14,7 @@
 #include "Alerts.cpp"
 #include "GameObject.cpp"
 #include "Gametime.cpp"
+#include "Helpers.hpp"
 
 using namespace sf;
 using namespace std;
@@ -75,10 +76,9 @@ public:
                 if (event.type == Event::Closed) this->window->close();
             }
 
-            GameObject::SortObjectsByZ();
-            all_gameobjects = GameObject::getParentObjects();
+            all_gameobjects = Helpers::SortGameObjectsByZ(GameObject::getParentObjects());
 
-            // UPDATE ALL GAMEOBJECTS AND UPLOAD DRAWABLES
+            // UPDATE ALL PARENT GAMEOBJECTS & CHILDREN AND UPLOAD DRAWABLES
             for(int i = 0; i < all_gameobjects.size(); i++){
                 all_gameobjects[i]->OnUpdate();
                 all_gameobjects[i]->UpdateChildren();
