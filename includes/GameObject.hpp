@@ -13,15 +13,17 @@ using namespace std;
 class GameObject {
 protected:
     void setParent(GameObject* gameObject) { this->parent = gameObject; }
+
     void childUpdate() {
         Vector2i currentPos = Vector2i(this->x, this->y);
         Vector2i newPos = Vector2i(this->parent->getX() + this->mirrorX, this->parent->getY() + this->mirrorY);
         this->x += (newPos.x - currentPos.x);
         this->y += (newPos.y - currentPos.y);
-        this->UpdateComponents();
+        this->OnUpdate();
+        this->UpdateChildren();
     }
-    void changeIsChild(bool value) { this->isChild = value; }
 
+    void changeIsChild(bool value) { this->isChild = value; }
 private:
     float x, y, mirrorX, mirrorY;
     float z;
@@ -80,6 +82,7 @@ public:
         child->setParent(this);
         this->children.push_back(child);
     }
+
     void addDrawable(Drawable* drawable) { this->drawables.push_back(drawable); }
 
     // MISC
@@ -105,6 +108,16 @@ public:
             }
         }
         return NULL;
+    }
+
+    vector<Drawable*> getCompleteDrawablesWithChildren() {
+        vector<Drawable*> result;
+        result.insert(result.end(), this->drawables.begin(), this->drawables.end());
+        for(int i = 0; i < this->children.size(); i++){
+            vector<Drawable*> temp = this->children[i]->getDrawables();
+            result.insert(result.end(), temp.begin(), temp.end());
+        }
+        return result;
     }
 
     void Move(float x, float y) {

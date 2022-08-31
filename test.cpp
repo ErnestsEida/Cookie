@@ -9,7 +9,7 @@ int main(){
 
     Child* f;
     for(int i = 0;i < 20;i++){
-        f = new Child(50*i, 500);
+        f = new Child(100 + (50*i), 500);
         f->setZ(-1);
     }
     
