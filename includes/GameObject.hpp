@@ -85,6 +85,8 @@ public:
 
     void addDrawable(Drawable* drawable) { this->drawables.push_back(drawable); }
 
+    void clearDrawables() { this->drawables.clear(); }
+
     // MISC
     GameObject* isColliding(string collision_tag = "") {
         vector<GameObject*> gameobjects = GameObject::objects;

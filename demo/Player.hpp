@@ -13,10 +13,10 @@ private:
     int vsp = 0;
 public:
     Player(int x, int y) : GameObject(x, y) {
-        this->setCollider(50, 50);
-        GraphicsRenderer* renderer = new GraphicsRenderer(25, 25);
-        renderer->addShape(ShapeType::Rectangle, 50, 50);
-        renderer->setDrawableOrigin(25, 25);
+        this->setCollider(32, 32);
+        GraphicsRenderer* renderer = new GraphicsRenderer(16, 16);
+        renderer->addSprite("./demo/sprites/test.png", 32, 32, 4);
+        renderer->setDrawableOrigin(16, 16);
         this->addChild(renderer);
     }
 

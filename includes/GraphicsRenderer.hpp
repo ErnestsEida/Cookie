@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.hpp"
+#include "Animation.hpp"
 #include <iostream>
 #include <map>
 
@@ -13,11 +14,8 @@ enum ShapeType {
 
 class GraphicsRenderer : public GameObject {
 private:
-    map<string, bool> flags = {
-        {"sprite", false},
-        {"shape", false},
-    };
     Vector2f origin;
+    Animation* animation = NULL;
 public:
     GraphicsRenderer(float x, float y, float z = 0) : GameObject(x, y, z) {}
 
@@ -29,11 +27,20 @@ public:
             RectangleShape* shape = new RectangleShape(Vector2f(value1, value2));
             this->addDrawable(shape);
         }
-        this->flags.at("shape") = true;
+        this->setDrawableOrigin(this->origin.x, this->origin.y);
     }
 
     void addShape(Shape* shape){
         this->addDrawable(dynamic_cast<Drawable*>(shape));
+        this->setDrawableOrigin(this->origin.x, this->origin.y);
+    }
+
+    void addSprite(string pathToSpritesheet, int frame_width, int frame_height, int frame_count) {
+        if (this->animation != NULL) {
+            this->clearDrawables();
+        }
+        this->animation = new Animation(pathToSpritesheet, frame_width, frame_height, frame_count);
+        this->addDrawable(dynamic_cast<Drawable*>(this->animation->getSprite()));
     }
 
     void setDrawableOrigin(float x, float y) {
@@ -45,5 +52,9 @@ public:
     }
 
     void OnStart() override {}
-    void OnUpdate() override {}
+    void OnUpdate() override {
+        if (this->animation != NULL) {
+            this->animation->TryNextSprite();
+        }
+    }
 };
