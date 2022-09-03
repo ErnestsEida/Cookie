@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameObject.hpp"
-#include "Animation.hpp"
 #include <iostream>
 #include <map>
 
@@ -15,7 +14,15 @@ enum ShapeType {
 class GraphicsRenderer : public GameObject {
 private:
     Vector2f origin;
-    Animation* animation = NULL;
+
+    // SPRITE ATTRIBUTES
+    Texture spritesheet;
+    Sprite* sprite = NULL;
+    string spriteFilePath = "";
+    Vector2i spriteSize;
+    int frame_count;
+
+    Clock clock;
 public:
     GraphicsRenderer(float x, float y, float z = 0) : GameObject(x, y, z) {}
 
@@ -36,11 +43,20 @@ public:
     }
 
     void addSprite(string pathToSpritesheet, int frame_width, int frame_height, int frame_count) {
-        if (this->animation != NULL) {
+        if (this->sprite != NULL) {
             this->clearDrawables();
         }
-        this->animation = new Animation(pathToSpritesheet, frame_width, frame_height, frame_count);
-        this->addDrawable(dynamic_cast<Drawable*>(this->animation->getSprite()));
+
+        this->spriteFilePath = pathToSpritesheet;
+        this->frame_count = frame_count;
+        this->spriteSize = Vector2i(frame_width, frame_height);
+        this->spritesheet = Texture();
+        if (!this->spritesheet.loadFromFile(this->spriteFilePath)) {
+            Alerts::ErrorMessage("Couldn't load \"" + this->spriteFilePath + "\"");
+            return ;
+        }
+        this->sprite = new Sprite(this->spritesheet, IntRect(Vector2i(0,0), this->spriteSize));
+        this->addDrawable(dynamic_cast<Drawable*>(this->sprite));
     }
 
     void setDrawableOrigin(float x, float y) {
@@ -51,10 +67,27 @@ public:
         }
     }
 
+    void TryNextSprite() {
+        if (this->clock.getElapsedTime().asSeconds() > 1.0 / this->frame_count) {
+            this->NextSprite();
+            this->clock.restart();
+        }
+    }
+
+    void NextSprite() {
+        IntRect rect = this->sprite->getTextureRect();
+        if (rect.left + this->spriteSize.x >= (this->frame_count * this->spriteSize.x)) {
+            rect.left = 0;
+        } else {
+            rect.left += this->spriteSize.x;
+        }
+        this->sprite->setTextureRect(rect);
+    }
+
     void OnStart() override {}
     void OnUpdate() override {
-        if (this->animation != NULL) {
-            this->animation->TryNextSprite();
+        if (this->sprite != NULL) {
+            this->TryNextSprite();
         }
     }
 };

@@ -14,9 +14,9 @@ private:
 public:
     Player(int x, int y) : GameObject(x, y) {
         this->setCollider(32, 32);
-        GraphicsRenderer* renderer = new GraphicsRenderer(16, 16);
+        GraphicsRenderer* renderer = new GraphicsRenderer(0, 0);
         renderer->addSprite("./demo/sprites/test.png", 32, 32, 4);
-        renderer->setDrawableOrigin(16, 16);
+        renderer->setDrawableOrigin(0, 0);
         this->addChild(renderer);
     }
 
