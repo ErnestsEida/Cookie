@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <SFML/Audio.hpp>
 #include "GameObject.hpp"
 
@@ -7,17 +8,14 @@ using namespace sf;
 
 class AudioPlayer : public GameObject {
 private:
-    Music* musicSlot = NULL;
-    Sound* soundSlot = NULL;
+    SoundSource* source = NULL;
 
     void eraseSlots() {
-         this->musicSlot = NULL;
-         this->soundSlot = NULL;
+        this->source = NULL;
     }
 
-    bool isMusic() { return this->musicSlot != NULL; }
     bool notEmpty() {
-        if (this->musicSlot == NULL && this->soundSlot == NULL) {
+        if (this->source == NULL) {
             Alerts::WarningMessage("No audio source is set on AudioPlayer. It won't play until there is one!");
             return false;
         }
@@ -26,75 +24,83 @@ private:
 public:
     AudioPlayer() : GameObject(0, 0) {}
     AudioPlayer(float x, float y) : GameObject(x, y) {}
-
-    void setSource(SoundSource* source, bool isMusic = false) {
-        this->eraseSlots();
-
-        if (isMusic)
-            this->musicSlot = dynamic_cast<Music*>(source);
-        else 
-            this->soundSlot = dynamic_cast<Sound*>(source);
+    AudioPlayer(string sourcePath) : GameObject(0, 0) {
+        this->setSource(sourcePath);
     }
 
-    void setSource(string pathToSource, bool isMusic = false) {
-        this->eraseSlots();
-        if (isMusic) {
-            this->musicSlot = new Music();
-            if (!this->musicSlot->openFromFile(pathToSource)) {
-                Alerts::ErrorMessage("Couldn't load source in AudioPlayer from \"" + pathToSource + "\"");
-            }
-        } else {
+    void OnUpdate() override {}
+    void OnStart() override {}
 
+    void setSource(SoundSource* source) {
+        this->eraseSlots();
+        this->source = source;
+    }
+
+    void setSource(string pathToSource) {
+        this->eraseSlots();
+        Music* musicbox = new Music();
+        if(!musicbox->openFromFile(pathToSource)) {
+            Alerts::ErrorMessage("Couldn't open source audio from \"" + pathToSource + "\"");
+            return;
         }
+        this->source = musicbox;
     }
 
     // CONTROLLING AUDIO GOES BELOW ...
     void Play() { 
-        if (this->notEmpty())
-            this->isMusic() ? this->musicSlot->play() : this->soundSlot->play();
-        else
+        if (this->notEmpty() && this->source->getStatus() != this->source->Playing){
+            this->source->play();
+        } else
             return; 
     }
 
     void Pause() {
         if (this->notEmpty())
-            this->isMusic() ? this->musicSlot->pause() : this->soundSlot->pause();
+            this->source->pause();
         else
             return;
     }
 
     void Stop() {
         if (this->notEmpty())
-            this->isMusic() ? this->musicSlot->stop() : this->soundSlot->stop();
+            this->source->stop();
         else
             return;
     }
 
     float getVolume() {
         if (this->notEmpty())
-            return this->isMusic() ? this->musicSlot->getVolume() : this->soundSlot->getVolume();
+            return this->source->getVolume();
         else
             return -1;
     }
 
     void setVolume(float volume) {
         if (this->notEmpty())
-            this->isMusic() ? this->musicSlot->setVolume(volume) : this->soundSlot->setVolume(volume);
+            this->source->setVolume(volume);
         else
             return;
     }
 
     float getPitch() {
         if (this->notEmpty())
-            return this->isMusic() ? this->musicSlot->getPitch() : this->soundSlot->getPitch();
+            return this->source->getPitch();
         else
             return -1;
     }
 
     void setPitch(float pitch) {
         if (this->notEmpty())
-            this->isMusic() ? this->musicSlot->setPitch(pitch) : this->soundSlot->setPitch(pitch);
+            this->source->setPitch(pitch);
         else
+            return;
+    }
+
+    void setLoop(bool loop) {
+        if (this->notEmpty()) {
+            Music* asMusic = dynamic_cast<Music*>(this->source);
+            asMusic->setLoop(loop);
+        } else
             return;
     }
 
