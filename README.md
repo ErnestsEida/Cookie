@@ -49,4 +49,4 @@ int main(){
 Creating GameObjects on screen can be done anywhere before `engine.Run()` call
 
 ## Classes
-Youy can find information about classes and their methods and functionality in [Class descriptions]()
+Youy can find information about classes and their methods and functionality in [Class descriptions](includes/readme.md#class-descriptions)
