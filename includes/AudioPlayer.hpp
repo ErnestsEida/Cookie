@@ -7,32 +7,95 @@ using namespace sf;
 
 class AudioPlayer : public GameObject {
 private:
-    SoundSource* source; 
+    Music* musicSlot = NULL;
+    Sound* soundSlot = NULL;
+
+    void eraseSlots() {
+         this->musicSlot = NULL;
+         this->soundSlot = NULL;
+    }
+
+    bool isMusic() { return this->musicSlot != NULL; }
+    bool notEmpty() {
+        if (this->musicSlot == NULL && this->soundSlot == NULL) {
+            Alerts::WarningMessage("No audio source is set on AudioPlayer. It won't play until there is one!");
+            return false;
+        }
+        return true;
+    }
 public:
     AudioPlayer() : GameObject(0, 0) {}
     AudioPlayer(float x, float y) : GameObject(x, y) {}
 
-    void setSource(SoundSource* source) {
-        this->source = source;
+    void setSource(SoundSource* source, bool isMusic = false) {
+        this->eraseSlots();
+
+        if (isMusic)
+            this->musicSlot = dynamic_cast<Music*>(source);
+        else 
+            this->soundSlot = dynamic_cast<Sound*>(source);
     }
 
     void setSource(string pathToSource, bool isMusic = false) {
-        // CREATE A SOUND 
+        this->eraseSlots();
+        if (isMusic) {
+            this->musicSlot = new Music();
+            if (!this->musicSlot->openFromFile(pathToSource)) {
+                Alerts::ErrorMessage("Couldn't load source in AudioPlayer from \"" + pathToSource + "\"");
+            }
+        } else {
+
+        }
     }
 
     // CONTROLLING AUDIO GOES BELOW ...
-    void Play() { this->source->play(); }
+    void Play() { 
+        if (this->notEmpty())
+            this->isMusic() ? this->musicSlot->play() : this->soundSlot->play();
+        else
+            return; 
+    }
 
-    void Pause() { this->source->pause(); }
+    void Pause() {
+        if (this->notEmpty())
+            this->isMusic() ? this->musicSlot->pause() : this->soundSlot->pause();
+        else
+            return;
+    }
 
-    void Stop() { this->source->stop(); }
+    void Stop() {
+        if (this->notEmpty())
+            this->isMusic() ? this->musicSlot->stop() : this->soundSlot->stop();
+        else
+            return;
+    }
 
-    float getVolume() const { return this->source->getVolume(); }
+    float getVolume() {
+        if (this->notEmpty())
+            return this->isMusic() ? this->musicSlot->getVolume() : this->soundSlot->getVolume();
+        else
+            return -1;
+    }
 
-    void setVolume(float volume) const { this->source->setVolume(volume); }
+    void setVolume(float volume) {
+        if (this->notEmpty())
+            this->isMusic() ? this->musicSlot->setVolume(volume) : this->soundSlot->setVolume(volume);
+        else
+            return;
+    }
 
-    float getPitch() const { return this->source->getPitch(); }
+    float getPitch() {
+        if (this->notEmpty())
+            return this->isMusic() ? this->musicSlot->getPitch() : this->soundSlot->getPitch();
+        else
+            return -1;
+    }
 
-    void setPitch(float pitch) { this->source->setPitch(pitch); }
+    void setPitch(float pitch) {
+        if (this->notEmpty())
+            this->isMusic() ? this->musicSlot->setPitch(pitch) : this->soundSlot->setPitch(pitch);
+        else
+            return;
+    }
 
 };
