@@ -6,9 +6,12 @@ This description guide will skip - __getters__ & __setters__ & __constructors__ 
 
 - [GameObject](#gameobject)
 - [Collider](#collider)
+- [GraphicsRenderer](#graphicsrenderer)
 
 
 ## GameObject
+Class is necessarry to be inherited for every object you want to display or use as child in other gameobjects
+
 ### Attributes  
 | Accessabilty | Type                   | Name       | Description                                                  |
 | ------------ | ---------------------- | ---------- | ------------------------------------------------------------ |
@@ -33,5 +36,33 @@ This description guide will skip - __getters__ & __setters__ & __constructors__ 
 | vector<GameObject*> | getAllObjects() | **STATIC** Returns all created gameobjects until calling this method |
 | vector<GameObject*> | getParentObjects() | **STATIC** Returns all gameobjects that are **NOT** flagged as child |
 | vector<GameObject*> | getChildObjects() | **STATIC** Returns all gameobjects that are flagged as child |
+| GameObject*         | isColliding(string tag) | if no tag is specified, method returns first gameobject that this object collides with |
+| GameObject*         | isCollidingAtPoint(float x, float y, string tag) | **STATIC** Checks if something is colliding at given point |
+| void                | move(float x, float y) | Moves gameobject |
 
 ## Collider
+This class is used in [GameObject](#gameobject) for collisions and their methods
+
+### Attributes
+| Accessabilty | Type | Name | Description |
+| ------------ | ---- | ---- | ----------- |
+| Private      | FloatRect* | area | holds the collision area for gameobject |
+| Private      | float | width | Value of collision rectangles width |
+| Private      | float | height | Value of collision rectangles height |
+| Private      | void* | holder | Stores value of collider holder |
+
+### Methods
+There arent any collider methods meant to be used by user, if you're very intersted, you can go through Collider.hpp
+
+## GraphicsRenderer
+
+### Attributes
+| Accessabilty | Type | Name | Description |
+| ------------ | ---- | ---- | ----------- |
+| Private | Vector2f | origin | holds coordinates of drawable origin* |
+
+**origin** - place in a shape or a sprite that it starts drawing from. 
+
+### Methods
+| Return type | Name | Description |
+| ----------- | ---- | ----------- |
