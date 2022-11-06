@@ -60,6 +60,11 @@ public:
 
     void LoadScene(Scene* scene) {
         this->currentScene = scene;
+        this->currentScene->SetupScene();
+    }
+
+    Scene* GetScene() const {
+        return this->currentScene;
     }
 
     void Run() {

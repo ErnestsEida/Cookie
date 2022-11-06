@@ -1,16 +1,17 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 using namespace sf;
 using namespace std;
 
 class Collider {
-private:
+public:
     FloatRect* area;
     float width, height;
     void* holder;
-public:
+
     Collider(float width = 1.0f, float height = 1.0f) {
         this->width = width;
         this->height = height;
@@ -24,8 +25,8 @@ public:
 
     void setHolder(void* holder) { this->holder = holder; }
 
-    void* getHolder() { return this->holder; }
-    FloatRect* getArea() { return this->area; }
     float bottom() { return this->area->top + height; }
     float right() { return this->area->left + width; }
+    float left() { return this->area->left; }
+    float top() { return this->area->top; }
 };

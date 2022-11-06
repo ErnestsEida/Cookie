@@ -1,9 +1,11 @@
+// SCENES HAVE TO BE CREATED AND LOADED !!!! BEFORE ANY OBJECTS ARE CREATED EVEN AS POINTERS, OTHERWISE COLLIDERS WILL SCREW UP !!!!!
+
 #pragma once
 
 #include <vector>
 #include <iostream>
 #include "Helpers.hpp"
-#include "GameObject.hpp"
+#include "GameObject.cpp"
 #include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -13,12 +15,17 @@ class Scene {
 private:
     string name;
     int width, height;
-    vector<GameObject*> sceneObjects;
 public:
+    vector<GameObject*> sceneObjects;
+
     Scene(string name, int width, int height) {
         this->name = name;
         this->width = width;
         this->height = height;
+    }
+
+    void SetupScene() {
+        GameObject::gameobjects = &this->sceneObjects;
     }
 
     void InsertObject(GameObject* object) {

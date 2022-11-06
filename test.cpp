@@ -7,6 +7,7 @@ int main(){
     Cookie c;
     c.CreateWindow(1280, 720, "Game1");
     Scene* scene = new Scene("scene1", 100, 100);
+    c.LoadScene(scene);
     Player x(50, 50);
     scene->InsertObject(&x);
 
@@ -16,8 +17,6 @@ int main(){
         f->setZ(-1);
         scene->InsertObject(f);
     }
-    
-    c.LoadScene(scene);
 
     c.Run();
     return 0;

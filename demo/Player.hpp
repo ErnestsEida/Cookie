@@ -4,9 +4,10 @@
 
 #include "../includes/GameObject.hpp"
 #include "../includes/Gametime.hpp"
-#include "Child.hpp"
 #include "../includes/GraphicsRenderer.hpp"
 #include "../includes/AudioPlayer.hpp"
+#include "../includes/Cookie.hpp"
+#include "../includes/Scene.hpp"
 
 class Player : public GameObject {
 private:
@@ -36,6 +37,20 @@ public:
         }
         int hsp = Keyboard::isKeyPressed(Keyboard::D) - Keyboard::isKeyPressed(Keyboard::A);
         int vsp = Keyboard::isKeyPressed(Keyboard::S) - Keyboard::isKeyPressed(Keyboard::W);
+
+        if (Keyboard::isKeyPressed(Keyboard::N)) {
+            Scene* scene = new Scene("scene2", 100, 100);
+            Cookie::Engine->LoadScene(scene);
+        }
+
+        if (this->isCollidingAtOffset(hsp, 0, "child") || this->isCollidingAtOffset(hsp, -0.1f, "child")) {
+            hsp = 0;
+        }
+
+        if (this->isCollidingAtOffset(0, vsp, "child") || this->isCollidingAtOffset(-0.1f, vsp, "child")) {
+            vsp = 0;
+        }
+
         float real_x = hsp * real_speed;
         float real_y = vsp * real_speed;
         // vsp += GRAVITY;

@@ -33,6 +33,7 @@ private:
     float z;
     string objectName, tag;
     Collider* collider;
+    Vector2f colliderDimensions;
 
     vector<GameObject*> children;
     vector<Drawable*> drawables;
@@ -40,6 +41,8 @@ private:
 public:
     bool isChild = false;
     GameObject* parent = NULL;
+
+    static vector<GameObject*> *gameobjects;
 
     // CONSTRUCTORS
     GameObject(float x, float y) {
@@ -86,6 +89,35 @@ public:
         this->setCollider(1, 1);
     }
 
+    // COLLISIONS
+    GameObject* isColliding(string tag) {
+        vector<GameObject*> objects = *GameObject::gameobjects;
+        for(int i = 0;i < objects.size(); i++) {
+            if (objects[i] != this && (objects[i]->getTag() == tag || tag == "")) {
+                if (this->collider->area->intersects(*objects[i]->collider->area)) {
+                    return objects[i];
+                }
+            }
+        }
+        return NULL;
+    }
+
+    GameObject* isCollidingAtOffset(float x_offset, float y_offset, string tag) {
+        vector<GameObject*> objects = *GameObject::gameobjects;
+        float x_start = x_offset >= 0 ? this->collider->right() : this->collider->left();
+        float y_start = y_offset >= 0 ? this->collider->bottom() : this-> collider->top();
+
+        for(int i = 0; i < objects.size(); i++) {
+            if (objects[i] != this && (tag == "" || objects[i]->getTag() == tag)){
+                if (objects[i]->getCollider()->area->contains(x_start + x_offset, y_start + y_offset)) {
+                    return objects[i];
+                }
+            }
+        }
+
+        return NULL;
+    }
+
     // GETTERS
     float getX() const { return this->x; }
     float getY() const { return this->y; }
@@ -118,33 +150,6 @@ public:
     void addDrawable(Drawable* drawable) { this->drawables.push_back(drawable); }
 
     void clearDrawables() { this->drawables.clear(); }
-
-    // MISC - COLLIDERS HAVE TO BE MOVED SOMEWHERE ELSE BECAUSE GAMEOBJECTS ARE NO LONGER STATIC !!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    // GameObject* isColliding(string collision_tag = "") {
-    //     vector<GameObject*> gameobjects = GameObject::objects;
-    //     for(int i = 0;i < gameobjects.size(); i++) {
-    //         if (gameobjects[i] != this && (gameobjects[i]->getTag() == collision_tag || collision_tag == "")) {
-    //             if (this->collider->getArea()->intersects(*gameobjects[i]->getCollider()->getArea())){
-    //                 return gameobjects[i];
-    //             }
-    //         }
-    //     }
-    //     return NULL;
-    // }
-
-    // static GameObject* isCollidingAtPoint(float x, float y, string collision_tag = "") {
-    //     vector<GameObject*> gameobjects = GameObject::objects;
-    //     for(int i = 0; i < gameobjects.size(); i++){
-    //         if (collision_tag == gameobjects[i]->getTag() || collision_tag == ""){
-    //             if (gameobjects[i]->getCollider()->getArea()->contains(x, y)) {
-    //                 return gameobjects[i];
-    //             }
-    //         }
-    //     }
-    //     return NULL;
-    // }
 
     vector<Drawable*> getCompleteDrawablesWithChildren() {
         vector<Drawable*> result;
