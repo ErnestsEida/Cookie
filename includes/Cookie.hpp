@@ -15,6 +15,7 @@
 #include "Scene.hpp"
 #include "Gametime.cpp"
 #include "Helpers.hpp"
+#include "Viewport.hpp"
 
 using namespace sf;
 using namespace std;
@@ -26,11 +27,13 @@ private:
     bool windowInitializationFlag = false;
     RenderWindow* window;
     Scene* currentScene = NULL;
+    Viewport* viewport;
 public:
     static Cookie* Engine;
 
     Cookie() {
         Cookie::Engine == NULL ? Cookie::Engine = this : throw std::invalid_argument("Can't have 2 engines at once!");
+        this->viewport = new Viewport(720, 360);
     }
 
     // GETTERS
@@ -41,17 +44,30 @@ public:
     // SETTERS
     void setWindow(RenderWindow* window) {
         this->window = window;
+        this->viewport->SetSize(this->window->getSize().x, this->window->getSize().y);
+        this->viewport->SetCenter(this->window->getSize().x / 2, this->window->getSize().y / 2);
+        this->window->setView(*this->viewport->view);
     }
 
     // MISC
     void CreateWindow(unsigned int width,unsigned int height, string title) {
         this->window = new RenderWindow(VideoMode(width, height), title, Style::Default);
         this->windowInitializationFlag = true;
+        this->viewport->SetSize(this->window->getSize().x, this->window->getSize().y);
+        this->viewport->SetCenter(this->window->getSize().x / 2, this->window->getSize().y / 2);
+        this->window->setView(*this->viewport->view);
     }
 
     void CreateWindow(unsigned int width,unsigned int height, string title, ContextSettings settings) {
         this->window = new RenderWindow(VideoMode(width, height), title, Style::Default, settings);
         this->windowInitializationFlag = true;
+        this->viewport->SetSize(this->window->getSize().x, this->window->getSize().y);
+        this->viewport->SetCenter(this->window->getSize().x / 2, this->window->getSize().y / 2);
+        this->window->setView(*this->viewport->view);
+    }
+
+    Viewport* GetViewport() const {
+        return this->viewport;
     }
 
     void CloseWindow() {
@@ -107,6 +123,7 @@ public:
             this->window->display();
 
             all_drawables.clear();
+            this->window->setView(*this->viewport->view);
         }
     }
 };

@@ -16,8 +16,10 @@ private:
     float speed = 150;
     int vsp = 0;
     AudioPlayer* audio;
+    Viewport* viewport;
 public:
-    Player(int x, int y) : GameObject(x, y) {
+    Player(int x, int y, Viewport* viewport) : GameObject(x, y) {
+        this->viewport = viewport;
         this->setCollider(32, 32);
         GraphicsRenderer* renderer = new GraphicsRenderer(0, 0);
         renderer->addSprite("./demo/sprites/test.png", 32, 32, 4);
@@ -55,5 +57,6 @@ public:
         float real_y = vsp * real_speed;
         // vsp += GRAVITY;
         this->Move(real_x, real_y);
+        this->viewport->SetCenter(this->getX(), this->getY());
     }
 };

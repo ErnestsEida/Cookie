@@ -8,7 +8,7 @@ int main(){
     c.CreateWindow(1280, 720, "Game1");
     Scene* scene = new Scene("scene1", 100, 100);
     c.LoadScene(scene);
-    Player x(50, 50);
+    Player x(50, 50, c.GetViewport());
     scene->InsertObject(&x);
 
     Child* f;
