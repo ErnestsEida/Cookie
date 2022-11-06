@@ -10,6 +10,10 @@
 using namespace sf;
 using namespace std;
 
+const int DEFAULT_Z = 0;
+const string DEFAULT_OBJECT_NAME = "object";
+const string DEFAULT_TAG = "none";
+
 class GameObject {
 protected:
     void setParent(GameObject* gameObject) { this->parent = gameObject; }
@@ -29,30 +33,58 @@ private:
     float z;
     string objectName, tag;
     Collider* collider;
-    bool isChild = false;
-    GameObject* parent = NULL;
 
     vector<GameObject*> children;
     vector<Drawable*> drawables;
 
 public:
-    // STATIC
-    static int objectCount;
-    static vector<GameObject*> objects;
-
-    static vector<GameObject*> getAllObjects();
-    static vector<GameObject*> getParentObjects();
-    static vector<GameObject*> getChildObjects();
-    static void SortObjectsByZ();
+    bool isChild = false;
+    GameObject* parent = NULL;
 
     // CONSTRUCTORS
-    GameObject(float x, float y);
-    
-    GameObject(float x, float y, float z);
-    
-    GameObject(float x, float y, float z, string objectName);
-    
-    GameObject(float x, float y, float z, string objectName, string tag);
+    GameObject(float x, float y) {
+        this->x = x;
+        this->mirrorX = x;
+        this->y = y;
+        this->mirrorY = y;
+        this->z = DEFAULT_Z;
+        this->objectName = DEFAULT_OBJECT_NAME;
+        this->tag = DEFAULT_TAG;
+        this->setCollider(1, 1);
+    }
+
+    GameObject(float x, float y, float z) {
+        this->x = x;
+        this->mirrorX = x;
+        this->y = y;
+        this->mirrorY = y;
+        this->z = z;
+        this->objectName = DEFAULT_OBJECT_NAME;
+        this->tag = DEFAULT_TAG;
+        this->setCollider(1, 1);
+    }
+
+    GameObject(float x, float y, float z, string objectName) {
+        this->x = x;
+        this->mirrorX = x;
+        this->y = y;
+        this->mirrorY = y;
+        this->z = DEFAULT_Z;
+        this->objectName = objectName;
+        this->tag = DEFAULT_TAG;
+        this->setCollider(1, 1);
+    }
+
+    GameObject(float x, float y, float z, string objectName, string tag) {
+        this->x = x;
+        this->mirrorX = x;
+        this->y = y;
+        this->mirrorY = y;
+        this->z = DEFAULT_Z;
+        this->objectName = objectName;
+        this->tag = tag;
+        this->setCollider(1, 1);
+    }
 
     // GETTERS
     float getX() const { return this->x; }
@@ -87,30 +119,32 @@ public:
 
     void clearDrawables() { this->drawables.clear(); }
 
-    // MISC
-    GameObject* isColliding(string collision_tag = "") {
-        vector<GameObject*> gameobjects = GameObject::objects;
-        for(int i = 0;i < gameobjects.size(); i++) {
-            if (gameobjects[i] != this && (gameobjects[i]->getTag() == collision_tag || collision_tag == "")) {
-                if (this->collider->getArea()->intersects(*gameobjects[i]->getCollider()->getArea())){
-                    return gameobjects[i];
-                }
-            }
-        }
-        return NULL;
-    }
+    // MISC - COLLIDERS HAVE TO BE MOVED SOMEWHERE ELSE BECAUSE GAMEOBJECTS ARE NO LONGER STATIC !!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    // GameObject* isColliding(string collision_tag = "") {
+    //     vector<GameObject*> gameobjects = GameObject::objects;
+    //     for(int i = 0;i < gameobjects.size(); i++) {
+    //         if (gameobjects[i] != this && (gameobjects[i]->getTag() == collision_tag || collision_tag == "")) {
+    //             if (this->collider->getArea()->intersects(*gameobjects[i]->getCollider()->getArea())){
+    //                 return gameobjects[i];
+    //             }
+    //         }
+    //     }
+    //     return NULL;
+    // }
 
-    static GameObject* isCollidingAtPoint(float x, float y, string collision_tag = "") {
-        vector<GameObject*> gameobjects = GameObject::objects;
-        for(int i = 0; i < gameobjects.size(); i++){
-            if (collision_tag == gameobjects[i]->getTag() || collision_tag == ""){
-                if (gameobjects[i]->getCollider()->getArea()->contains(x, y)) {
-                    return gameobjects[i];
-                }
-            }
-        }
-        return NULL;
-    }
+    // static GameObject* isCollidingAtPoint(float x, float y, string collision_tag = "") {
+    //     vector<GameObject*> gameobjects = GameObject::objects;
+    //     for(int i = 0; i < gameobjects.size(); i++){
+    //         if (collision_tag == gameobjects[i]->getTag() || collision_tag == ""){
+    //             if (gameobjects[i]->getCollider()->getArea()->contains(x, y)) {
+    //                 return gameobjects[i];
+    //             }
+    //         }
+    //     }
+    //     return NULL;
+    // }
 
     vector<Drawable*> getCompleteDrawablesWithChildren() {
         vector<Drawable*> result;

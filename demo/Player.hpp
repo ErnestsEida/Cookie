@@ -38,13 +38,6 @@ public:
         int vsp = Keyboard::isKeyPressed(Keyboard::S) - Keyboard::isKeyPressed(Keyboard::W);
         float real_x = hsp * real_speed;
         float real_y = vsp * real_speed;
-        if (GameObject::isCollidingAtPoint(this->getX(), this->getCollider()->bottom() + real_y, "child") || GameObject::isCollidingAtPoint(this->getX() + this->getCollider()->getArea()->width, this->getCollider()->bottom() + real_y, "child") || GameObject::isCollidingAtPoint(this->getX(), this->getY() + real_y, "child") || GameObject::isCollidingAtPoint(this->getX() + this->getCollider()->getArea()->width, this->getY() + real_y, "child")) {
-            real_y =  0;
-        }
-
-        if (GameObject::isCollidingAtPoint(this->getX() + real_x, this->getY(), "child") || GameObject::isCollidingAtPoint(this->getX() + real_x, this->getY() + this->getCollider()->getArea()->height, "child") || GameObject::isCollidingAtPoint(this->getCollider()->right() + real_x, this->getY(), "child") || GameObject::isCollidingAtPoint(this->getCollider()->right() + real_x, this->getY() + this->getCollider()->getArea()->height, "child")){
-            real_x = 0;
-        }
         // vsp += GRAVITY;
         this->Move(real_x, real_y);
     }

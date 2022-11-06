@@ -21,4 +21,20 @@ public:
 
         return objects;
     }
+
+    static vector<GameObject*> ParseParentGameObjects(vector<GameObject*> objects) {
+        vector<GameObject*> result;
+        for(int i = 0; i < objects.size(); i++){
+            if (!objects[i]->isChild) result.push_back(objects[i]);
+        }
+        return result;
+    }
+
+    static vector<GameObject*> ParseChildrenGameObjects(vector<GameObject*> objects) {
+        vector<GameObject*> result;
+        for(int i = 0; i < objects.size(); i++){
+            if (objects[i]->isChild) result.push_back(objects[i]);
+        }
+        return result;
+    }
 };
