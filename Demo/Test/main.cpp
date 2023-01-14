@@ -2,6 +2,7 @@
 #include "../../includes/GameObject.cpp"
 #include "../../includes/Scene.cpp"
 #include "../../includes/SpriteRenderer.cpp"
+#include "../../includes/Gametime.cpp"
 
 #include <iostream>
 
@@ -9,7 +10,7 @@ using namespace std;
 
 class Player : public GameObject {
 public:
-    Player() : GameObject(100, 100) {
+    Player() : GameObject(0, 0, 1, "Player") {
         SpriteRenderer* renderer = new SpriteRenderer();
         renderer->SetRectangle(100, 100);
         this->AddChild(renderer);
@@ -17,9 +18,8 @@ public:
 
     void Update() override {
         if (Keyboard::isKeyPressed(Keyboard::D)) {
-            this->x += 5;
+            this->x += 100 * Gametime::deltaTime;
         }
-        // cout << this->x << endl;
     }
 };
 

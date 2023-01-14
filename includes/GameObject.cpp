@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 
+#include <SFML/Graphics.hpp>
+
 using namespace std;
 using namespace sf;
 
@@ -19,8 +21,8 @@ private:
     vector<Drawable*> drawables;
 
     void SetupObject(float x, float y, int z, string objectName, string tag) {
-        this->x = x;
-        this->y = y;
+        this->x = offset_x = x;
+        this->y = offset_y = y;
         this->z = z;
         this->objectName = objectName;
         this->tag = tag;
@@ -33,8 +35,8 @@ protected:
     }
 
 public:
-    float x;
-    float y;
+    float x, offset_x;
+    float y, offset_y;
     int z;
     string objectName;
     string tag;
@@ -93,10 +95,9 @@ public:
         }
         
         Transformable* asTransformable;
-        cout << this->x << endl;
         for(size_t i = 0; i < this->drawables.size(); i++) {
             if (this->drawables.at(i) == nullptr) continue;
-            asTransformable = (Transformable*) this->drawables.at(i);
+            asTransformable = dynamic_cast<Transformable*>(this->drawables.at(i));
             asTransformable->setPosition(this->x, this->y);
         }
     }
@@ -105,20 +106,14 @@ public:
 
     // Children & Parent ========================================================
 
-    void PreUpdateChildren() {
-        if (this->children.size() == 0) return;
-        for(size_t i = 0; i < this->children.size(); i++) {
-            this->children.at(i)->x -= this->x;
-            this->children.at(i)->y -= this->y;
-        }
-    }
-
     void UpdateChildren() {
         if (this->children.size() == 0) return;
         for(size_t i = 0; i < this->children.size(); i++) {
-            this->children.at(i)->Update();
-            this->children.at(i)->x += this->x;
-            this->children.at(i)->y += this->y;
+            GameObject* child = this->children.at(i);
+            child->Update();
+            child->x = this->x + child->offset_x;
+            child->y = this->y + child->offset_y;
+            child->UpdateChildren();
         }
     }
 

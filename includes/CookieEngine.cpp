@@ -107,7 +107,6 @@ public:
                 gameobjects = this->scene->GetGameObjects();
                 // Update necessary data
                 for(size_t i = 0; i < gameobjects.size(); i++) {
-                    gameobjects.at(i)->PreUpdateChildren();
                     gameobjects.at(i)->Update();
                     gameobjects.at(i)->UpdateChildren();
                     gameobjects.at(i)->UpdateDrawables();
