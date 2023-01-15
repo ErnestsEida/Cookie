@@ -34,6 +34,8 @@ protected:
         this->drawables.clear();
     }
 
+    GameObject* parent = nullptr;
+
 public:
     float x, offset_x;
     float y, offset_y;
@@ -123,6 +125,7 @@ public:
 
     void AddChild(GameObject* object) {
         object->isChild = true;
+        object->parent = this;
         this->children.push_back(object);
     }
 

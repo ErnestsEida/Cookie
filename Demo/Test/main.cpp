@@ -5,6 +5,7 @@
 #include "../../includes/Gametime.cpp"
 #include "../../includes/Input.cpp"
 #include "../../includes/Animation.cpp"
+#include "../../includes/Collider.cpp"
 
 #include <iostream>
 
@@ -14,12 +15,17 @@ class Player : public GameObject {
 private:
     Animation* runAnimation = new Animation("./sprites/run.png", Vector2i(48, 48), 6, true);
     SpriteRenderer* renderer;
+    Collider* collider;
 
 public:
     Player() : GameObject(100, 100, 1, "Player") {
         this->renderer = new SpriteRenderer();
         this->renderer->SetAnimation(this->runAnimation);
         this->renderer->SetOrigin(Origin::Center);
+
+        this->collider = new Collider(Vector2f(24, 38), true);
+        
+        this->AddChild(this->collider);
         this->AddChild(renderer);
     }
 
@@ -32,8 +38,8 @@ public:
             this->renderer->SetScale(Vector2f(-1, 1));
         }
 
-        if (Input::OnKeyDown(Keyboard::Key::F)) {
-            this->runAnimation->ToggleFreeze();
+        if (Input::OnKeyDown(Keyboard::Key::Escape)) {
+            CookieEngine::singleton->CloseGame();
         }
     }
 };
@@ -42,7 +48,9 @@ class Scene1 : public Scene {
 public:
     Scene1() {
         Player* player = new Player();
+        Collider* collider = new Collider(Vector2f(100, 100));
         this->AddGameObject(player);
+        this->AddGameObject(collider);
     }
 };
 

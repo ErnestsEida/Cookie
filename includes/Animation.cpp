@@ -69,14 +69,16 @@ public:
             if (textureRect.left + this->frame_size.x >= (this->frame_count * this->frame_size.x)) {
                 if (loop) {
                     textureRect.left = 0;
+                    this->current_frame = 0;
                 } else {
                     this->Freeze();
                 }
             } else {
-                if (!this->freezeFrame)
+                if (!this->freezeFrame) {
                     textureRect.left += this->frame_size.x;
+                    this->current_frame++;
+                }
             }
-            
             this->timer.restart();
         }
 
