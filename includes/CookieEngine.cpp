@@ -7,6 +7,7 @@
 #include "Alerts.cpp"
 #include "Gametime.cpp"
 #include "Scene.cpp"
+#include "Input.cpp"
 
 using namespace sf;
 using namespace std;
@@ -90,6 +91,8 @@ public:
 
         while(this->display->isOpen()) {
             if (this->closeWindowFlag) this->display->close();
+            
+            Input::UpdateKeyStates();
 
             // deltaTime update
             tp2 = chrono::system_clock::now();
