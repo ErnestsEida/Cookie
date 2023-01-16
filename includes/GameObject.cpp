@@ -66,6 +66,13 @@ public:
     GameObject(float x, float y, int z, string objectName, string tag){
         this->SetupObject(x, y, z, objectName, tag);
     }
+
+    ~GameObject() {
+        for(size_t i = 0; i < this->children.size(); i++) {
+            delete this->children.at(i);
+        }
+        cout << this->objectName << ": Gameobject Delete" << endl;
+    }
     // ==========================================================================
 
     // Drawables ========================================================
@@ -126,6 +133,8 @@ public:
     void AddChild(GameObject* object) {
         object->isChild = true;
         object->parent = this;
+        object->x = this->x + object->offset_x;
+        object->y = this->y + object->offset_y;
         this->children.push_back(object);
     }
 

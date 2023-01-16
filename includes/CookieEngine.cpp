@@ -71,7 +71,11 @@ public:
     void SetScene(Scene* scene) {
         if (this->scene != nullptr) delete this->scene;
         this->scene = scene;
-    } 
+    }
+
+    void DestroyObject(GameObject* object) {
+        this->scene->RemoveGameObject(object);
+    }
 
     // =============================================================
 

@@ -30,14 +30,14 @@ public:
         CircleShape* shape = new CircleShape(radius);
         shape->setFillColor(Color::White);
         this->sprite = shape;
-        this->spriteSize = Vector2i(shape->getTextureRect().width, shape->getTextureRect().height);
+        this->spriteSize = Vector2i(radius * 2, radius * 2);
     }
 
     void SetRectangle(float width, float height) {
         RectangleShape* shape = new RectangleShape(Vector2f(width, height));
         shape->setFillColor(Color::White);
         this->sprite = shape;
-        this->spriteSize = Vector2i(shape->getTextureRect().width, shape->getTextureRect().height);
+        this->spriteSize = Vector2i(width, height);
     }
 
     void SetAnimation(Animation* animation) {

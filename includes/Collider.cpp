@@ -14,8 +14,6 @@ private:
     FloatRect* collision_rect;
     Vector2f collision_size;
     RectangleShape* debugShape;
-    Clock startTimer;
-    static float delayInSeconds;
 public:
     static vector<Collider*> current_colliders;
 
@@ -32,11 +30,10 @@ public:
             this->AddDrawable(debugShape);
         }
         Collider::current_colliders.push_back(this);
-        this->startTimer.restart();
     }
 
-    static void SetDelayOnCollisions(float delayInSeconds) {
-        Collider::delayInSeconds = delayInSeconds;
+    ~Collider() {
+        cout << "Collider Delete" << endl;
     }
 
     FloatRect* GetColliderRect() {
@@ -59,19 +56,19 @@ public:
         return this->collision_rect->top + this->collision_rect->height;
     }
 
-    Collider* isColliding(string tag) {
-        if (this->startTimer.getElapsedTime().asSeconds() > Collider::delayInSeconds) {
-            for(size_t i = 0; i < Collider::current_colliders.size(); i++) {
-                Collider* collider = Collider::current_colliders.at(i);
-                if (collider->parent->tag == tag && this != collider) {
-                    if (this->collision_rect->intersects(*collider->GetColliderRect())) return collider;
-                }
+    Collider* isColliding(string tag = "") {
+        for(size_t i = 0; i < Collider::current_colliders.size(); i++) {
+            Collider* collider = Collider::current_colliders.at(i);
+            if ((collider->parent->tag == tag || tag == "") && this != collider) {
+                if (this->collision_rect->intersects(*collider->GetColliderRect())) return collider;
             }
         }
         return nullptr;
     }
 
-    // TODO: CreateCollidingAtOffset(x ,y , tag), using FloatRect::Contains!
+    bool IsCollidingAtPoint(float point_x, float point_y) {
+        return this->collision_rect->contains(point_x, point_y);
+    }
 
     void Update() override {
         if (this->parent == nullptr) Alerts::Error("Collider has to be a child of a gameobject!");
@@ -81,4 +78,3 @@ public:
 };
 
 vector<Collider*> Collider::current_colliders = vector<Collider*>(); 
-float Collider::delayInSeconds = 0.05;

@@ -16,6 +16,8 @@ public:
         this->objects_in_scene.push_back(object);
     }
 
+    void RemoveGameObject(GameObject* object) {}
+
     vector<GameObject*> GetGameObjects() {
         vector<GameObject*> parent_objects;
         for(size_t i = 0; i < objects_in_scene.size(); i++) {
