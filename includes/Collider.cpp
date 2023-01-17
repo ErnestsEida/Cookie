@@ -27,7 +27,7 @@ public:
             debugShape->setOutlineColor(Color::Red);
             debugShape->setOutlineThickness(1);
             debugShape->setFillColor(Color(255,255,255,0));
-            this->AddDrawable(debugShape);
+            this->AddDrawable(new IDrawable(debugShape, -2147483647));
         }
         Collider::current_colliders.push_back(this);
     }

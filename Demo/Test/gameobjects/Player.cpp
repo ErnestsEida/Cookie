@@ -18,7 +18,7 @@ private:
     Collider* collider;
 
 public:
-    Player() : GameObject(100, 100, 1, "Player", "player") {
+    Player() : GameObject(100, 100, -100, "Player", "player") {
         this->renderer = new SpriteRenderer();
         this->renderer->SetAnimation(this->runAnimation);
         this->renderer->SetOrigin(Origin::Center);

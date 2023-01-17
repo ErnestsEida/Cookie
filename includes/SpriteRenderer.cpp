@@ -21,7 +21,7 @@ enum Origin {
 
 class SpriteRenderer : public GameObject {
 private:
-    Drawable* sprite = nullptr;
+    IDrawable* sprite = nullptr;
     Animation* animation = nullptr;
     bool alertThrown = false;
     Vector2i spriteSize;
@@ -29,30 +29,30 @@ public:
     void SetCircle(float radius) {
         CircleShape* shape = new CircleShape(radius);
         shape->setFillColor(Color::White);
-        this->sprite = shape;
+        this->sprite = new IDrawable(shape, this->z);
         this->spriteSize = Vector2i(radius * 2, radius * 2);
     }
 
     void SetRectangle(float width, float height) {
         RectangleShape* shape = new RectangleShape(Vector2f(width, height));
         shape->setFillColor(Color::White);
-        this->sprite = shape;
+        this->sprite = new IDrawable(shape, this->z);
         this->spriteSize = Vector2i(width, height);
     }
 
     void SetAnimation(Animation* animation) {
         this->animation = animation;
-        this->sprite = this->animation->GetFrame();
+        this->sprite = new IDrawable(this->animation->GetFrame(), this->z);
         this->spriteSize = this->animation->GetSize();
     }
 
     void SetScale(Vector2f scale) {
-        Transformable* asTransformable = dynamic_cast<Transformable*>(this->sprite);
+        Transformable* asTransformable = dynamic_cast<Transformable*>(this->sprite->drawable);
         asTransformable->setScale(scale);
     }
 
     void SetOrigin(Vector2f origin) {
-        Transformable* asTransformable = dynamic_cast<Transformable*>(this->sprite);
+        Transformable* asTransformable = dynamic_cast<Transformable*>(this->sprite->drawable);
         asTransformable->setOrigin(origin);
     }
 
@@ -105,7 +105,7 @@ public:
 
     void Update() override {
         if (this->animation != nullptr) {
-            this->sprite = this->animation->GetFrame();
+            this->sprite->drawable = this->animation->GetFrame();
             this->animation->NextFrame();
         }
         this->ClearDrawables();

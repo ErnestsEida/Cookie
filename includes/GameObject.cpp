@@ -4,6 +4,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "IDrawable.cpp"
+
 using namespace std;
 using namespace sf;
 
@@ -18,7 +20,7 @@ private:
     bool isChild = false;
 
     vector<GameObject*> children;
-    vector<Drawable*> drawables;
+    vector<IDrawable*> drawables;
 
     void SetupObject(float x, float y, int z, string objectName, string tag) {
         this->x = offset_x = x;
@@ -77,16 +79,16 @@ public:
 
     // Drawables ========================================================
     
-    void AddDrawable(Drawable* drawable) {
+    void AddDrawable(IDrawable* drawable) {
         this->drawables.push_back(drawable);
     }
 
-    vector<Drawable*> GetDrawables() {
-        vector<Drawable*> resulting_drawables;
+    vector<IDrawable*> GetDrawables() {
+        vector<IDrawable*> resulting_drawables;
         if (this->children.size() != 0) {
             for(size_t i = 0; i < this->children.size(); i++) {
                 GameObject* child = this->children.at(i);
-                vector<Drawable*> children_drawables = child->GetDrawables();
+                vector<IDrawable*> children_drawables = child->GetDrawables();
                 resulting_drawables.insert(resulting_drawables.end(), children_drawables.begin(), children_drawables.end());
             }
         }
@@ -106,7 +108,8 @@ public:
         Transformable* asTransformable;
         for(size_t i = 0; i < this->drawables.size(); i++) {
             if (this->drawables.at(i) == nullptr) continue;
-            asTransformable = dynamic_cast<Transformable*>(this->drawables.at(i));
+            this->drawables.at(i)->z = this->z;
+            asTransformable = dynamic_cast<Transformable*>(this->drawables.at(i)->drawable);
             asTransformable->setPosition(this->x, this->y);
         }
     }
@@ -122,6 +125,7 @@ public:
             child->Update();
             child->x = this->x + child->offset_x;
             child->y = this->y + child->offset_y;
+            child->z = this->z;
             child->UpdateChildren();
         }
     }
@@ -135,6 +139,7 @@ public:
         object->parent = this;
         object->x = this->x + object->offset_x;
         object->y = this->y + object->offset_y;
+        object->z = this->z;
         this->children.push_back(object);
     }
 

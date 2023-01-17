@@ -24,8 +24,6 @@ int main() {
 
 // !!! On Scene change objects don't destroy correctly taking up memory with unused gameobjects
 
-// Z-index sorting
-
 // Get GameObject by its Objectname
 
 // Different pipeline for persistant gameobject ( objects that don't get destroyed on scene change )

@@ -13,7 +13,7 @@ private:
     Collider* collider;
     SpriteRenderer* renderer;
 public:
-    Block(float x, float y) : GameObject(x, y, z, "Block", "block") {
+    Block(float x, float y) : GameObject(x, y, 1, "Block", "block") {
         collider = new Collider(Vector2f(50, 50), true);
         renderer = new SpriteRenderer();
         renderer->SetRectangle(50, 50);

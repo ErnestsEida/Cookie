@@ -94,10 +94,9 @@ public:
         if (this->scene == nullptr) Alerts::Warning("Game was run without a scene!");
 
         vector<GameObject*> gameobjects;
-        vector<Drawable*> all_drawables;
+        vector<IDrawable*> all_drawables;
 
         while(this->display->isOpen()) {
-            cout << Collider::current_colliders.size() << endl;
             if (this->closeWindowFlag) this->display->close();
             
             Input::UpdateKeyStates();
@@ -124,18 +123,19 @@ public:
                 }
                 
                 // Get drawables
-                
+
                 for(size_t i = 0; i < gameobjects.size(); i++) {
-                    vector<Drawable*> object_drawables = gameobjects.at(i)->GetDrawables();
+                    vector<IDrawable*> object_drawables = gameobjects.at(i)->GetDrawables();
                     all_drawables.insert(all_drawables.end(), object_drawables.begin(), object_drawables.end());
                 }
+                all_drawables = IDrawable::SortByZ(all_drawables);
 
                 // Draw
                 this->display->clear();
 
                 for(size_t i = 0;i < all_drawables.size();i++){
                     if (all_drawables.at(i) != nullptr)
-                        this->display->draw(*all_drawables.at(i));
+                        this->display->draw(*all_drawables.at(i)->drawable);
                 }
 
                 this->display->display();
