@@ -28,10 +28,13 @@ public:
         return parent_objects;
     }
 
-    ~Scene() {
-        for(size_t i = 0; i < objects_in_scene.size(); i++) {
-            delete objects_in_scene.at(i);
-        }
-        GameObject::object_count = 0;
+    void ClearGameObjects() {
+        // for(size_t i = 0; i < objects_in_scene.size(); i++) {
+        //     delete objects_in_scene.at(i);
+        // }
+        // GameObject::object_count = 0;
+        this->objects_in_scene.clear();
     }
+
+    virtual void SetupScene() = 0;
 };

@@ -9,8 +9,6 @@
 #include "../../../includes/Animation.cpp"
 #include "../../../includes/Collider.cpp"
 
-#include "./Scene2.cpp"
-
 using namespace std;
 
 class Player : public GameObject {
@@ -46,6 +44,7 @@ public:
             CookieEngine::singleton->CloseGame();
         }
 
-        if (Input::OnKeyDown(Keyboard::Key::Q)) CookieEngine::singleton->SetScene(new Scene2());
+        if (Input::OnKeyDown(Keyboard::Key::Q)) CookieEngine::singleton->SetScene("room2");
+        if (Input::OnKeyDown(Keyboard::Key::E)) CookieEngine::singleton->SetScene("room1");
     }
 };

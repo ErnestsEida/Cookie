@@ -8,6 +8,8 @@
 #include "Gametime.cpp"
 #include "Scene.cpp"
 #include "Input.cpp"
+#include "SceneManager.cpp"
+#include "Collider.cpp"
 
 using namespace sf;
 using namespace std;
@@ -68,9 +70,10 @@ public:
 
     // SCENE =======================================================
 
-    void SetScene(Scene* scene) {
-        if (this->scene != nullptr) delete this->scene;
-        this->scene = scene;
+    void SetScene(string scene_name) {
+        if (this->scene != nullptr) this->scene->ClearGameObjects();
+        this->scene = SceneManager::GetScene(scene_name);
+        this->scene->SetupScene();
     }
 
     void DestroyObject(GameObject* object) {
@@ -94,6 +97,7 @@ public:
         vector<Drawable*> all_drawables;
 
         while(this->display->isOpen()) {
+            cout << Collider::current_colliders.size() << endl;
             if (this->closeWindowFlag) this->display->close();
             
             Input::UpdateKeyStates();
