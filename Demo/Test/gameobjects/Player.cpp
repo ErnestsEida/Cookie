@@ -44,6 +44,14 @@ public:
             CookieEngine::singleton->CloseGame();
         }
 
+        if (Input::OnKeyDown(Keyboard::Key::F)) {
+            vector<GameObject*> ptrs = CookieEngine::singleton->GetObjects("block");
+            if (ptrs.size() != 0) {
+                cout << ptrs[0]->x << ", " << ptrs.size() << endl;
+            } else {
+                cout << "NULLPTR" << endl;
+            }
+        }
         if (Input::OnKeyDown(Keyboard::Key::Q)) CookieEngine::singleton->SetScene("room2");
         if (Input::OnKeyDown(Keyboard::Key::E)) CookieEngine::singleton->SetScene("room1");
     }

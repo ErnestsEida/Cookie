@@ -76,6 +76,14 @@ public:
         this->scene->SetupScene();
     }
 
+    GameObject* GetObject(string objectName) {
+        return this->scene->GetObject(objectName);
+    }
+
+    vector<GameObject*> GetObjects(string tag) {
+        return this->scene->GetObjects(tag);
+    }
+
     void DestroyObject(GameObject* object) {
         this->scene->RemoveGameObject(object);
     }

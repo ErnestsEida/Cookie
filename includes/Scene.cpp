@@ -28,6 +28,21 @@ public:
         return parent_objects;
     }
 
+    GameObject* GetObject(string name) {
+        for(size_t i = 0; i < this->objects_in_scene.size(); i++) {
+            if (this->objects_in_scene.at(i)->objectName == name) return this->objects_in_scene.at(i);
+        }
+        return nullptr;
+    }
+
+    vector<GameObject*> GetObjects(string tag) {
+        vector<GameObject*> final_vector = vector<GameObject*>();
+        for(size_t i = 0; i < this->objects_in_scene.size(); i++) {
+            if (this->objects_in_scene.at(i)->tag == tag) final_vector.push_back(this->objects_in_scene.at(i));
+        }
+        return final_vector;
+    }
+
     void ClearGameObjects() {
         // for(size_t i = 0; i < objects_in_scene.size(); i++) {
         //     delete objects_in_scene.at(i);
