@@ -3,6 +3,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "includes/main_menu_bar.cpp"
+
 #include <iostream>
 
 const char* glsl_version = "#version 130";
@@ -46,13 +48,17 @@ void shutDownHandler() {
     glfwTerminate();
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    for(int i = 0; i < argc; i++) {
+        std::cout << argv[i] << std::endl;
+    }
+
     initializeHandler();
     if (mainWindow == nullptr) {
         std::cout << "Window didnt initialize" << std::endl;
+        exit(1);
     }
 
-    bool* is_open = new bool(true);
     while(!glfwWindowShouldClose(mainWindow)) {
         glfwPollEvents();
 
@@ -60,15 +66,7 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        if(is_open) {
-            ImGui::Begin("My Window", is_open);
-
-            if (ImGui::Button("Click me!")) {
-                std::cout << "Hello" << std::endl;
-            }
-
-            ImGui::End();
-        }
+        MainMenuBar::create();
 
         mainUpdate();
     }
