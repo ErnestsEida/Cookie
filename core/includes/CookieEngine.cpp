@@ -66,7 +66,8 @@ public:
       while(this->window->pollEvent(event)) {
         if (event.type == Event::Closed) this->window->close();
       }
-    }
+      
+    } // End of mainloop
     
   }
 };
