@@ -77,8 +77,9 @@ public:
     bool destroyed = RecursiveObjectDestruction(nullptr, object);
     if (!destroyed) Alerts::Error("Couldn't find the specified object to destroy in current GameRooms objects!");
   }
-
-  void CreateObject(GameObject* object = nullptr, string id = "" ) { // This method should be used to create new gameobjects, otherwise pointers might get screwed up, and objects might not update
+  
+  // This method should be used to create new gameobjects, otherwise pointers might get screwed up, and objects might not update
+  void CreateObject(GameObject* object = nullptr, string id = "" ) {
     if (object == nullptr) Alerts::Error("No gameobject was passed to be created!");
     if (id == "") {
       this->current_objects.push_back(object);
