@@ -78,6 +78,23 @@ public:
     if (!destroyed) Alerts::Error("Couldn't find the specified object to destroy in current GameRooms objects!");
   }
 
+  void CreateObject(GameObject* object = nullptr, string id = "" ) { // This method should be used to create new gameobjects, otherwise pointers might get screwed up, and objects might not update
+    if (object == nullptr) Alerts::Error("No gameobject was passed to be created!");
+    if (id == "") {
+      this->current_objects.push_back(object);
+    } else {
+      bool parent_found = false;
+      for(size_t i = 0; i < this->current_objects.size(); i++) {
+        if (this->current_objects.at(i)->id == id) {
+          this->current_objects.at(i)->PushChild(object);
+          parent_found = true;
+          break;
+        }
+      }
+      if (!parent_found) Alerts::Error("Couldn't find an object in currently available objects with given ID("+id+"), to attach the child to!");
+    }
+  }
+
   // GAME-ROOM MANAGEMENT
 
   void ChangeRoom(string name) {
