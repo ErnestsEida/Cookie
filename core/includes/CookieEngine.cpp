@@ -8,6 +8,7 @@
 #include "Gametime.cpp"
 #include "Gameroom.cpp"
 #include "Gameobject.cpp"
+#include "Input.cpp"
 
 using namespace sf;
 using namespace std;
@@ -100,6 +101,7 @@ public:
     // Start of Mainloop
     while(this->window->isOpen()) {
       if (this->closeWindowFlag) this->window->close();
+      Input::UpdateKeyStates();
 
       // Calculate deltaTime
       tp2 = chrono::system_clock::now();
