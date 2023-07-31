@@ -86,6 +86,8 @@ public:
     auto tp1 = chrono::system_clock::now();
     auto tp2 = chrono::system_clock::now();
 
+    vector<IDrawable> vecToDraw = vector<IDrawable>();
+
     // Start of Mainloop
     while(this->window->isOpen()) {
       if (this->closeWindowFlag) this->window->close();
@@ -105,17 +107,20 @@ public:
       // ============
 
       // Gameobject management & Drawing
-      vector<Drawable*> vecToDraw = vector<Drawable*>();
+      vecToDraw = vector<IDrawable>();
       for(size_t i = 0; i < this->current_objects.size(); i++) {
         GameObject* object = this->current_objects.at(i);
         object->Update();
-        vector<Drawable*> objDrawables = object->getDrawables();
+        vector<IDrawable> objDrawables = object->getDrawables();
         vecToDraw.insert(vecToDraw.end(), objDrawables.begin(), objDrawables.end());
       }
 
+
+      vecToDraw = IDrawable::SortByZ(vecToDraw);
+
       this->window->clear();
       for(size_t i = 0; i < vecToDraw.size(); i++) {
-        this->window->draw(*vecToDraw.at(i));
+        this->window->draw(*vecToDraw.at(i).drawable);
       }
       this->window->display();
       // =====================

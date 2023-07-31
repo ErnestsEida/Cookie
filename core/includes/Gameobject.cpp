@@ -1,9 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-
 #include <iostream>
 #include <vector>
+#include "interfaces/IDrawable.cpp"
 
 using namespace sf;
 using namespace std;
@@ -15,9 +15,16 @@ const string DEFAULT_TAG = "";
 class GameObject {
 private:
   bool isChild = false;
-
   vector<GameObject*> children;
-  vector<Drawable*> drawables;
+  vector<IDrawable> drawables;
+
+protected:
+  GameObject* parent = nullptr;
+
+  void PushDrawable(Drawable* drawable) {
+    this->drawables.push_back(IDrawable(drawable, this->z));
+  }
+
 public:
   float x, offset_x, y, offset_y;
   int z;
@@ -35,15 +42,27 @@ public:
 
   // Miscelaneous
 
-  vector<Drawable*> getDrawables() {
-    vector<Drawable*> drawables = vector<Drawable*>();
-    drawables.insert(drawables.end(), this->drawables.begin(), this->drawables.end());
-    return drawables;
+  vector<IDrawable> getDrawables() {
+    vector<IDrawable> resulting_drawables;
+    if (this->children.size() != 0) {
+        for(size_t i = 0; i < this->children.size(); i++) {
+            GameObject* child = this->children.at(i);
+            vector<IDrawable> children_drawables = child->getDrawables();
+            resulting_drawables.insert(resulting_drawables.end(), children_drawables.begin(), children_drawables.end());
+        }
+    }
+
+    resulting_drawables.insert(resulting_drawables.end(), this->drawables.begin(), this->drawables.end());
+
+    return resulting_drawables;
   }
 
-  void PushChild(GameObject* obj) {
-    obj->isChild = true;
-    this->children.push_back(obj);
+  void PushChild(GameObject* object) {
+    object->isChild = true;
+    object->parent = this;
+    object->x = this->x + object->offset_x;
+    object->y = this->y + object->offset_y;
+    this->children.push_back(object);
   }
 
   // Virtual Methods
