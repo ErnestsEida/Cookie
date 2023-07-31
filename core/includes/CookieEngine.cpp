@@ -6,6 +6,8 @@
 
 #include "Alerts.cpp"
 #include "Gametime.cpp"
+#include "Gameroom.cpp"
+#include "Gameobject.cpp"
 
 using namespace sf;
 using namespace std;
@@ -13,7 +15,14 @@ using namespace std;
 class CookieCore {
 private:
   RenderWindow* window = nullptr;
+  GameRoom* room = nullptr;
   bool closeWindowFlag = false;
+  vector<GameObject*> current_objects = vector<GameObject*>();
+
+  void Validate() {
+    if (this->window == nullptr) Alerts::Error("Trying to start the engine without creating a window!");
+    if (this->room == nullptr) Alerts::Error("Please set a room, before trying to start the engine!");
+  }
 
 public:
   static CookieCore *singleton;
@@ -44,14 +53,40 @@ public:
     this->closeWindowFlag = true;
   };
 
+  // GAME-OBJECT MANAGEMENT
+
+  void DestroyObject(GameObject * object) {
+    int idx = -1;
+    for(size_t i = 0; i < this->current_objects.size(); i++) {
+      if (this->current_objects.at(i)->id == object->id) {
+        idx = i;
+        break;
+      }
+    }
+
+    if (idx == -1) Alerts::Error("Trying to destroy an object that is not present in current GameRoom!");
+    this->current_objects.erase(this->current_objects.begin()+idx);
+  }
+
+  // GAME-ROOM MANAGEMENT
+
+  void ChangeRoom(string name) {
+    GameRoom* room = GameRoom::GetRoom(name);
+    if (room == nullptr) Alerts::Error("Couldn't find a room with name '"+ name +"'");
+    
+    this->room = room;
+    this->current_objects = room->GenerateObjects();
+  }
+
   // STARTING THE ENGINE
 
   void Start() {
-    if (this->window == nullptr) Alerts::Error("Trying to start the engine without creating a window!");
+    this->Validate();
 
     auto tp1 = chrono::system_clock::now();
     auto tp2 = chrono::system_clock::now();
 
+    // Start of Mainloop
     while(this->window->isOpen()) {
       if (this->closeWindowFlag) this->window->close();
 
@@ -62,10 +97,28 @@ public:
       Gametime::deltaTime = elapsedTime.count();
       // ==================
 
+      // SFML Events
       Event event;
       while(this->window->pollEvent(event)) {
         if (event.type == Event::Closed) this->window->close();
       }
+      // ============
+
+      // Gameobject management & Drawing
+      vector<Drawable*> vecToDraw = vector<Drawable*>();
+      for(size_t i = 0; i < this->current_objects.size(); i++) {
+        GameObject* object = this->current_objects.at(i);
+        object->Update();
+        vector<Drawable*> objDrawables = object->getDrawables();
+        vecToDraw.insert(vecToDraw.end(), objDrawables.begin(), objDrawables.end());
+      }
+
+      this->window->clear();
+      for(size_t i = 0; i < vecToDraw.size(); i++) {
+        this->window->draw(*vecToDraw.at(i));
+      }
+      this->window->display();
+      // =====================
       
     } // End of mainloop
     

@@ -1,4 +1,8 @@
+# Gui part
 .vscode
 obj/*.o
 imgui.ini
 cookie
+
+# Core part
+core/demo
