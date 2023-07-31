@@ -24,6 +24,23 @@ private:
     if (this->room == nullptr) Alerts::Error("Please set a room, before trying to start the engine!");
   }
 
+  bool RecursiveObjectDestruction(vector<GameObject*>* search_vector = nullptr, GameObject* object = nullptr) {
+    if (search_vector == nullptr) search_vector = &this->current_objects;  
+    if (object == nullptr) Alerts::Error("No object specified for destruction!");
+
+    for(size_t i = 0; i < search_vector->size(); i++) {
+      if (search_vector->at(i)->id == object->id) {
+        search_vector->erase(search_vector->begin()+i);
+        return true;
+      } else if (search_vector->at(i)->children.size() > 0) {
+        bool children_result = RecursiveObjectDestruction(&search_vector->at(i)->children, object);
+        if (children_result) return true;
+      }
+    }
+
+    return false;
+  }
+
 public:
   static CookieCore *singleton;
 
@@ -56,16 +73,8 @@ public:
   // GAME-OBJECT MANAGEMENT
 
   void DestroyObject(GameObject * object) {
-    int idx = -1;
-    for(size_t i = 0; i < this->current_objects.size(); i++) {
-      if (this->current_objects.at(i)->id == object->id) {
-        idx = i;
-        break;
-      }
-    }
-
-    if (idx == -1) Alerts::Error("Trying to destroy an object that is not present in current GameRoom!");
-    this->current_objects.erase(this->current_objects.begin()+idx);
+    bool destroyed = RecursiveObjectDestruction(nullptr, object);
+    if (!destroyed) Alerts::Error("Couldn't find the specified object to destroy in current GameRooms objects!");
   }
 
   // GAME-ROOM MANAGEMENT
@@ -110,9 +119,15 @@ public:
       vecToDraw = vector<IDrawable>();
       for(size_t i = 0; i < this->current_objects.size(); i++) {
         GameObject* object = this->current_objects.at(i);
+        // Updates
         object->Update();
-        vector<IDrawable> objDrawables = object->getDrawables();
-        vecToDraw.insert(vecToDraw.end(), objDrawables.begin(), objDrawables.end());
+        object->UpdateChildren();
+        object->UpdateDrawables();
+        // Drawables
+        if (object->isVisible) {
+          vector<IDrawable> objDrawables = object->getDrawables();
+          vecToDraw.insert(vecToDraw.end(), objDrawables.begin(), objDrawables.end());
+        }
       }
 
 

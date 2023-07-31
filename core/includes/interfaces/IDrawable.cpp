@@ -17,7 +17,7 @@ public:
 
   // Currently using bubble sort, but might need to remake this into quick sort or something if performance issues are enountered
   static vector<IDrawable> SortByZ(vector<IDrawable> tDrawables) {
-        if (tDrawables.size() < 2) return tDrawables;
+        if (tDrawables.size() == 0) return tDrawables;
         int iterations = 1;
 
         while(iterations > 0) {
