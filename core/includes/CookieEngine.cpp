@@ -8,6 +8,7 @@
 #include "Gametime.cpp"
 #include "Gameroom.cpp"
 #include "Gameobject.cpp"
+#include "Collider.cpp"
 #include "Input.cpp"
 
 using namespace sf;
@@ -103,6 +104,7 @@ public:
     if (room == nullptr) Alerts::Error("Couldn't find a room with name '"+ name +"'");
     
     this->room = room;
+    Collider::ClearColliders();
     this->current_objects = room->GenerateObjects();
   }
 
@@ -161,7 +163,6 @@ public:
       // =====================
       
     } // End of mainloop
-    
   }
 };
 

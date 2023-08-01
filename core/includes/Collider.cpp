@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include "Gameobject.cpp"
 
@@ -12,6 +13,7 @@ public:
 
   static void ClearColliders() {
     Collider::all_colliders.clear();
+    Collider::all_colliders.shrink_to_fit();
   }
 
   Collider(Vector2f size = Vector2f(1,1), bool debug_on = false, string id = "@collider@", float x = 0, float y = 0, float z = -2147483648) : GameObject(id, x, y, z) {
@@ -29,26 +31,31 @@ public:
   // Contains & Intersects
 
   Collider* isColliding(string id = "", string tag = "") {
-    Collider* colliding_with = nullptr;
-    if (id != "") {
+    if (id != "") { // Search by ID
       for (size_t i = 0; i < Collider::all_colliders.size(); i++) {
         if (Collider::all_colliders.at(i) == this) continue;
 
         if (Collider::all_colliders.at(i)->parent->id == id) {
-          // Search by Id
+          Collider* potential_collision = Collider::all_colliders.at(i);
+          if (potential_collision->area.intersects(this->area))  {
+            return potential_collision;
+          }
         }
       }
-    } else if (tag != "") {
+    } else if (tag != "") { // Search By TAG
       for (size_t i = 0; i < Collider::all_colliders.size(); i++) {
         if (Collider::all_colliders.at(i) == this) continue;
 
         if (Collider::all_colliders.at(i)->parent->objectTag == tag) {
-          // Search by tag
+          Collider* potential_collision = Collider::all_colliders.at(i);
+          if (potential_collision->area.intersects(this->area))  {
+            return potential_collision;
+          }
         }
       }
     }
 
-    return colliding_with;
+    return nullptr;
   }
 
   // =====================
