@@ -1,4 +1,9 @@
-# necessary packages
+# Necessary package installation macOS (using brew)
+# brew install sfml
+# brew install glfw3
+# brew install pkg-config
+
+# Necessary package installation Linux
 sudo apt-get install libsfml-dev
 sudo apt-get install libglfw3-dev
 sudo apt-get install pkg-config

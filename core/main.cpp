@@ -1,12 +1,11 @@
 #include <iostream>
 #include "includes/CookieEngine.cpp"
-#include "demo/Template.cpp"
+#include "demo/rooms.cpp"
 
 using namespace std;
 
 int main() {
-  GameRoom::AddRoom("x", new Template());
-  GameRoom::AddRoom("y", new Template2());
+  GameRoom::AddRoom("x", new Room1);
   CookieCore *e = new CookieCore();
 
   e->CreateWindow(1280, 720);

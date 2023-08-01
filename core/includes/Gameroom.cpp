@@ -7,7 +7,7 @@ using namespace std;
 
 class GameRoom {
 public:
-  static vector<pair<string, GameRoom*>> rooms;
+  static vector<pair<string, GameRoom*> > rooms;
   
   static void AddRoom(string title, GameRoom* room) {
     if (room == nullptr) Alerts::Error("Trying to append a GameRoom that is pointing to NULL");
@@ -31,4 +31,4 @@ public:
   virtual vector<GameObject*> GenerateObjects() = 0;
 };
 
-vector<pair<string, GameRoom*>> GameRoom::rooms = vector<pair<string, GameRoom*>>();
+vector<pair<string, GameRoom*> > GameRoom::rooms = vector<pair<string, GameRoom*> >();
