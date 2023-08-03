@@ -10,6 +10,7 @@
 #include "Gameobject.cpp"
 #include "Collider.cpp"
 #include "Input.cpp"
+#include "Viewport.cpp"
 
 using namespace sf;
 using namespace std;
@@ -17,6 +18,7 @@ using namespace std;
 class CookieCore {
 private:
   RenderWindow* window = nullptr;
+  Viewport* viewport = nullptr;
   GameRoom* room = nullptr;
   bool closeWindowFlag = false;
   vector<GameObject*> current_objects = vector<GameObject*>();
@@ -54,6 +56,16 @@ public:
     }
   }
 
+  // VIEWPORT MANAGEMENT
+
+  void SetViewFollower(GameObject* follower) {
+    this->viewport->following = follower;
+  }
+
+  void SetViewSize(float width, float height) {
+    this->viewport->ChangeSize(width, height);
+  }
+
   // WINDOW MANAGEMENT
 
   void CreateWindow(unsigned int width = 0, unsigned int height = 0, string title = "CookieEngine Window", ContextSettings settings = ContextSettings()) {
@@ -66,11 +78,17 @@ public:
     }
 
     this->window = new RenderWindow(VideoMode(width, height), title, Style::Default, settings);
+    this->viewport = new Viewport(Vector2f(width, height));
+    this->window->setView(*this->viewport->view);
   }
 
   void CloseWindow() {
     this->closeWindowFlag = true;
-  };
+  }
+
+  Vector2u GetWindowSize() {
+    return this->window->getSize();
+  }
 
   // GAME-OBJECT MANAGEMENT
 
@@ -123,6 +141,11 @@ public:
       if (this->closeWindowFlag) this->window->close();
       Input::UpdateKeyStates();
 
+      if (this->viewport->following != nullptr) {
+        this->viewport->UpdateLocation(this->viewport->following->x, this->viewport->following->y); 
+      }
+      this->window->setView(*this->viewport->view);
+
       // Calculate deltaTime
       tp2 = chrono::system_clock::now();
       chrono::duration<float> elapsedTime = tp2 - tp1;
@@ -152,7 +175,6 @@ public:
         }
       }
 
-
       vecToDraw = IDrawable::SortByZ(vecToDraw);
 
       this->window->clear();
@@ -161,7 +183,6 @@ public:
       }
       this->window->display();
       // =====================
-      
     } // End of mainloop
   }
 };
