@@ -24,6 +24,10 @@ public:
     if (this->is_open) {
       ImGui::Begin("Scripts Editor", &this->is_open, ImGuiWindowFlags_NoResize);
 
+      if (ImGui::Button("New Script")) {
+        cout << "testing button" << endl;
+      }
+      
       ImGui::InputTextMultiline("##ScriptEditor", this->input, this->bufferSize, ImVec2(720, 480), ImGuiInputTextFlags_AllowTabInput);
 
       ImGui::End();
