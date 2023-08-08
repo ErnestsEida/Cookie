@@ -4,6 +4,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "includes/main_menu_bar.cpp"
+#include "includes/globals/windows_manager.cpp"
 
 #include <iostream>
 
@@ -58,6 +59,8 @@ int main(int argc, char* argv[]) {
         std::cout << "Window didnt initialize" << std::endl;
         exit(1);
     }
+    
+    MainMenuBar main_menu_bar;
 
     while(!glfwWindowShouldClose(mainWindow)) {
         glfwPollEvents();
@@ -66,7 +69,9 @@ int main(int argc, char* argv[]) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        MainMenuBar::create();
+        main_menu_bar.create();
+        
+        for(IDisplayWindow* window : WindowsManager::all_windows) window->create();
 
         mainUpdate();
     }

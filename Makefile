@@ -17,16 +17,14 @@
 EXE = cookie
 OBJ_DIR = obj
 IMGUI_DIR = ./includes/imgui
-CUSTOM_DIR = ./includes/
 SOURCES = main.cpp
-SOURCES += $(CUSTOM_DIR)/main_menu_bar.cpp
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
 
-CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(CUSTOM_DIR)
+CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS += -g -Wall -Wformat
 LIBS =
 
@@ -74,9 +72,6 @@ endif
 ##---------------------------------------------------------------------
 
 $(OBJ_DIR)/%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o: $(CUSTOM_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o: $(IMGUI_DIR)/%.cpp
