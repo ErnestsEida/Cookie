@@ -1,12 +1,15 @@
 #pragma once
-#include "../interfaces/IDisplayWindow.cpp"
-#include <vector>
-
-using namespace std;
+#include "../index_windows.cpp"
 
 class WindowsManager {
 public:
-  static vector<IDisplayWindow*> all_windows;
+  static GameObjectBuilder* gameobject_builder_window;
+  static GameRoomBuilder* gameroom_builder_window;
+  static ScriptEditor* script_editor_window;
+  static AssetsManager* assets_manager_window;
 };
 
-vector<IDisplayWindow*> WindowsManager::all_windows = vector<IDisplayWindow*>();
+GameObjectBuilder* WindowsManager::gameobject_builder_window = nullptr;
+GameRoomBuilder* WindowsManager::gameroom_builder_window = nullptr;
+ScriptEditor* WindowsManager::script_editor_window = nullptr;
+AssetsManager* WindowsManager::assets_manager_window = nullptr;

@@ -5,6 +5,7 @@
 
 #include "includes/main_menu_bar.cpp"
 #include "includes/globals/windows_manager.cpp"
+#include "includes/index_windows.cpp"
 
 #include <iostream>
 
@@ -71,7 +72,11 @@ int main(int argc, char* argv[]) {
 
         main_menu_bar.create();
         
-        for(IDisplayWindow* window : WindowsManager::all_windows) window->create();
+        // Windows
+        if (WindowsManager::gameobject_builder_window != nullptr) WindowsManager::gameobject_builder_window->create();
+        if (WindowsManager::gameroom_builder_window != nullptr) WindowsManager::gameroom_builder_window->create();
+        if (WindowsManager::script_editor_window != nullptr) WindowsManager::script_editor_window->create();
+        if (WindowsManager::assets_manager_window != nullptr) WindowsManager::assets_manager_window->create();
 
         mainUpdate();
     }
