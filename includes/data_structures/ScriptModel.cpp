@@ -5,11 +5,8 @@
 using namespace std;
 
 class ScriptModel {
-private:
-  string id;
-
 public:
-  string name, content;
+  string name, content, id;
 
   ScriptModel(string name, string content = "") {
     this->id = Generator::GenerateID();
