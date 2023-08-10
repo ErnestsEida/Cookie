@@ -33,8 +33,14 @@ private:
     return window_name.c_str();
   }
 
+  string processScriptName(string text) {
+    replace(text.begin(), text.end(), ' ', '_');
+    return text;
+  }
+
   bool InvokeCreateNewScript() {
     string script_name_as_str = string(this->new_script_name);
+    script_name_as_str = processScriptName(script_name_as_str);
     if (script_name_as_str.size() == 0) return false;
 
     ScriptModel* newScript = new ScriptModel(script_name_as_str);
@@ -51,7 +57,10 @@ private:
       ImGui::InputText("name", this->new_script_name, 64);
 
       if (ImGui::Button("Accept", ImVec2(130, 30))) {
-        if (InvokeCreateNewScript()) memset(this->new_script_name, '\0', 64);
+        if (InvokeCreateNewScript()) {
+          memset(this->new_script_name, '\0', 64);
+          ImGui::CloseCurrentPopup();
+        }
       }
       ImGui::SameLine();
       if (ImGui::Button("Cancel", ImVec2(130, 30))) {
