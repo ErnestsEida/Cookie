@@ -18,7 +18,9 @@ void initializeHandler() {
         exit(1);
     }
 
-    mainWindow = glfwCreateWindow(1280, 720, "CookieEngine", nullptr, nullptr);
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    mainWindow = glfwCreateWindow(mode->width, mode->height, "CookieEngine", nullptr, nullptr);
     glfwMakeContextCurrent(mainWindow);
     glfwSwapInterval(1);
     

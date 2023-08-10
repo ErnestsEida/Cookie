@@ -30,7 +30,7 @@ public:
   }
 
   static bool InsertScript(ScriptModel* script) {
-    if (script == nullptr || ScriptUnique(script->id)) return false;  
+    if (script == nullptr || !ScriptUnique(script->id)) return false;  
     ModelStorage::scripts.push_back(script);
     return true;
   }
