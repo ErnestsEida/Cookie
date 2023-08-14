@@ -92,7 +92,10 @@ private:
       for(size_t i = 0;i < ModelStorage::scripts.size(); i++) {
         ScriptModel* script = ModelStorage::scripts.at(i);
 
-        if (ImGui::Selectable(script->name.c_str())) SelectScript(script);
+        if (ImGui::Selectable(script->name.c_str()))
+        {
+          SelectScript(script);
+        } 
       }
       ImGui::EndListBox();
     }

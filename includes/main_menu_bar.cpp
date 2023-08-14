@@ -6,7 +6,7 @@
 
 class MainMenuBar {
 private:
-  void WindowsSelection() {
+  void WindowsSelection(GLFWwindow* window) {
     if (ImGui::BeginMenu("Windows")) // Project tab
       {
         if (ImGui::MenuItem("GameObject Builder")) {
@@ -46,10 +46,10 @@ private:
   }
   
 public:
-  void create() {
+  void create(GLFWwindow* window) {
     if (ImGui::BeginMainMenuBar())
     {
-      WindowsSelection();
+      WindowsSelection(window);
       ImGui::EndMainMenuBar();
     }
   }
