@@ -73,6 +73,7 @@ int main(int argc, char* argv[]) {
         ImGui::NewFrame();
 
         main_menu_bar.create(mainWindow);
+        ImGui::ShowDemoWindow();
         
         // Windows
         if (WindowsManager::gameobject_builder_window != nullptr) WindowsManager::gameobject_builder_window->create();
