@@ -1,58 +1,30 @@
 #pragma once
 #include "interfaces/IDisplayWindow.cpp"
+#include "helpers/AssetManagerIndex.cpp"
+#include "helpers/names.cpp"
+#include "globals/model_storage.cpp"
 #include <iostream>
 #include <vector>
 #include <cmath>
 
 using namespace std;
 
-ImU32 TranslateColor(float color[4]) {
-  ImVec4 color_as_vec = ImVec4(color[0], color[1], color[2], color[3]);
-  return ImGui::ColorConvertFloat4ToU32(color_as_vec);
-}
-
-ImVec2 AdjustToBase(ImVec2 base, ImVec2 adjustable) {
-  return ImVec2(base.x + adjustable.x, base.y + adjustable.y);
-}
-
-enum ToolType {
-  Pencil,
-  Circle,
-  Rectangle,
-  Line,
-};
-
-struct Tool {
-  ToolType type = ToolType::Pencil;
-  int size = 1;
-  float color[4] = {1, 1, 1, 1};
-};
-
-struct DrawnObject {
-  ToolType drawn_by;
-  int size;
-  ImU32 color;
-  ImVec2 start;
-  ImVec2 end;
-
-  DrawnObject() {}
-
-  DrawnObject(Tool drawn_by_tool, ImVec2 start, ImVec2 end = ImVec2(0, 0)) {
-    this->drawn_by = drawn_by_tool.type;
-    this->color = TranslateColor(drawn_by_tool.color);
-    this->size = drawn_by_tool.size;
-    this->start = start;
-    this->end = end;
-  }
+struct AssetModalFields {
+  char name[64] = "";
+  int size_x = 0;
+  int size_y = 0;
 };
 
 class AssetsManager : public IDisplayWindow {
 private:
   bool draw_area_set = false;
   bool is_drawing = false;
+  bool is_new_modal_open = false;
   
+  AssetModalFields asset_fields = AssetModalFields();
+
+  AssetModel* current_asset = nullptr;
   Tool selected_tool;
-  vector<DrawnObject> drawn_objects = vector<DrawnObject>();
   ImVec2 last_point;
 
   ////////////////////////////// FLAGS /////////////////////////////
@@ -60,7 +32,14 @@ private:
   ImGuiColorEditFlags ColorPickerFlags() {
     ImGuiColorEditFlags color_picker_flags = ImGuiColorEditFlags_DisplayRGB;
     color_picker_flags |= ImGuiColorEditFlags_NoSidePreview;
+    color_picker_flags |= ImGuiColorEditFlags_NoLabel;
     return color_picker_flags;
+  }
+
+  ImGuiWindowFlags DefaultWindowFlags() {
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+    flags |= ImGuiWindowFlags_NoResize;
+    return flags;
   }
 
   ////////////////////////////// DRAWING HANDLER ////////////////////////
@@ -79,27 +58,27 @@ private:
     ImVec2 adjusted_end = AdjustToBase(canvas_pos, mouse_pos);
     
     if (selected_tool.type == ToolType::Pencil) {
-      this->drawn_objects.push_back(DrawnObject(this->selected_tool, this->last_point, mouse_pos));
+      this->current_asset->objects_drawn.push_back(DrawnObject(this->selected_tool, this->last_point, mouse_pos));
       this->last_point = mouse_pos;
     } else if (selected_tool.type == ToolType::Line) {
-      draw_list->AddLine(adjusted_start, adjusted_end, TranslateColor(selected_tool.color), selected_tool.size);
+      draw_list->AddLine(adjusted_start, adjusted_end, PreviewColor(selected_tool.color), selected_tool.size);
     } else if (selected_tool.type == ToolType::Rectangle) {
-      draw_list->AddRect(adjusted_start, adjusted_end, TranslateColor(selected_tool.color), 0, 0, selected_tool.size);
+      draw_list->AddRect(adjusted_start, adjusted_end, PreviewColor(selected_tool.color), 0, 0, selected_tool.size);
     } else if (selected_tool.type == ToolType::Circle) {
       int radius = adjusted_end.x - adjusted_start.x;
-      draw_list->AddCircle(adjusted_start, radius > 0 ? radius : -radius, TranslateColor(selected_tool.color), 0, selected_tool.size);
+      draw_list->AddCircle(adjusted_start, radius > 0 ? radius : -radius, PreviewColor(selected_tool.color), 0, selected_tool.size);
     }
   }
 
   void HandleMouseRelease(ImVec2 mouse_pos) {
     if (!selected_tool.type == ToolType::Pencil) {
-      this->drawn_objects.push_back(DrawnObject(this->selected_tool, this->last_point, mouse_pos));
+      this->current_asset->objects_drawn.push_back(DrawnObject(this->selected_tool, this->last_point, mouse_pos));
     }
   }
 
   void DrawToCanvas(ImDrawList *draw_list, ImVec2 canvas_pos) {
-    for(size_t i = 0; i < this->drawn_objects.size(); i++) {
-      DrawnObject object = this->drawn_objects.at(i);
+    for(size_t i = 0; i < this->current_asset->objects_drawn.size(); i++) {
+      DrawnObject object = this->current_asset->objects_drawn.at(i);
       ImVec2 adjusted_end_vec = ImVec2(canvas_pos.x + object.end.x, canvas_pos.y + object.end.y);
       ImVec2 adjusted_start_vec = ImVec2(canvas_pos.x + object.start.x, canvas_pos.y + object.start.y);
       
@@ -114,15 +93,43 @@ private:
     }
   }
 
+  ////////////////////////////// ASSETS MANAGER /////////////////////////
+
+  bool InvokeNewAsset() {
+    string name_as_str = string(this->asset_fields.name);
+    name_as_str = processName(name_as_str);
+    if (name_as_str.size() == 0) return false;
+
+    AssetModel* newAsset = new AssetModel(name_as_str, ImVec2(asset_fields.size_x, asset_fields.size_y));
+    return ModelStorage::InsertAsset(newAsset);
+  }
+
+  bool IsAssetSelected(AssetModel* asset) {
+    return asset->id == this->current_asset->id;
+  }
+
   ////////////////////////////// COMPONENTS /////////////////////////////
 
-  void ShowDrawingArea() {
-    if (!this->draw_area_set) {
-      ImGui::SetNextWindowSize(ImVec2(720, 480));
-      this->draw_area_set = true;
-    }
+  void ShowNewAssetModal() {
+    ImGui::Begin("New Asset Form", &this->is_new_modal_open, DefaultWindowFlags());
+      ImGui::InputText("Name", this->asset_fields.name, 64);
+      ImGui::InputScalar("Width", ImGuiDataType_U16, &this->asset_fields.size_x);
+      ImGui::InputScalar("Height", ImGuiDataType_U16, &this->asset_fields.size_y);
 
-    ImGui::Begin("Asset Canvas", &this->is_open);
+      if (ImGui::Button("Cancel")) this->is_new_modal_open = false;
+      ImGui::SameLine();
+      if (ImGui::Button("Accept")) {
+        if (InvokeNewAsset()) {
+          memset(this->asset_fields.name, '\0', 64);
+          this->is_new_modal_open = false;
+        }
+      }
+    ImGui::End();
+  }
+
+  void ShowDrawingArea() {
+    ImGui::SetNextWindowSize(this->current_asset->canvas_size);
+    ImGui::Begin("Asset Canvas", &this->is_open, ImGuiWindowFlags_NoResize);
       ImVec2 canvas_size = ImGui::GetContentRegionAvail();
       ImVec2 canvas_pos = ImGui::GetCursorScreenPos();  
       ImDrawList* draw_list = ImGui::GetWindowDrawList(); 
@@ -151,24 +158,32 @@ private:
   }
 
   void ShowControlButtons() {
-    if (ImGui::Button("Save Asset")) {
-      // Save asset
-    }
-
+    if (ImGui::Button("Save Asset")) {}
     ImGui::SameLine();
-    if (ImGui::Button("New Asset")) {
-      // New Asset
+    if (ImGui::Button("New Asset")) this->is_new_modal_open = true;
+  }
+
+  void ShowAssetsList() {
+    ImGui::Spacing();
+    ImGui::Text("Assets List");
+
+    ImVec2 avail_space = ImGui::GetContentRegionAvail();
+    if (ImGui::BeginListBox("##avail_assets")) {
+      for (size_t i = 0; i < ModelStorage::assets.size(); i++) {
+        AssetModel* asset = ModelStorage::assets.at(i);
+        if (ImGui::Selectable(asset->name.c_str())) {
+          this->current_asset = asset;
+        }
+      }
+      ImGui::EndListBox();
     }
   }
 
   void ShowDrawingControls() {
-    ImGui::SetNextWindowSize(ImVec2(250, 400));
-
-    ImGui::Begin("Canvas controls", &this->is_open);
+    ImGui::Begin("Canvas controls", &this->is_open, DefaultWindowFlags());
       ShowControlButtons();
-      
       ImGui::ColorPicker4("##color_picker", this->selected_tool.color, ColorPickerFlags());
-      ImGui::SliderInt("Tool Size", &this->selected_tool.size, 1, 25);
+      ImGui::SliderInt("##Tool Size", &this->selected_tool.size, 1, 25);
       if (ImGui::BeginListBox("##Tool")) {
         if (ImGui::Selectable("Pencil", this->selected_tool.type == ToolType::Pencil)) {
           this->selected_tool.type = ToolType::Pencil;
@@ -184,6 +199,7 @@ private:
         }
         ImGui::EndListBox();
       }
+      ShowAssetsList();
     ImGui::End();
   }
 
@@ -191,7 +207,8 @@ public:
   void create() override {
     if (this->is_open) {
       ShowDrawingControls();
-      ShowDrawingArea();
+      if (this->current_asset != nullptr) ShowDrawingArea();
+      if (this->is_new_modal_open) ShowNewAssetModal();
     }
   }
 };

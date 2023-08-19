@@ -6,6 +6,7 @@
 #include "interfaces/IDisplayWindow.cpp"
 #include "data_structures/ScriptModel.cpp"
 #include "globals/model_storage.cpp"
+#include "helpers/names.cpp"
 
 using namespace std;
 
@@ -33,14 +34,9 @@ private:
     return window_name.c_str();
   }
 
-  string processScriptName(string text) {
-    replace(text.begin(), text.end(), ' ', '_');
-    return text;
-  }
-
   bool InvokeCreateNewScript() {
     string script_name_as_str = string(this->new_script_name);
-    script_name_as_str = processScriptName(script_name_as_str);
+    script_name_as_str = processName(script_name_as_str);
     if (script_name_as_str.size() == 0) return false;
 
     ScriptModel* newScript = new ScriptModel(script_name_as_str);
