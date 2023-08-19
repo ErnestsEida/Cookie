@@ -11,6 +11,10 @@ ImU32 TranslateColor(float color[4]) {
   return ImGui::ColorConvertFloat4ToU32(color_as_vec);
 }
 
+ImVec2 AdjustToBase(ImVec2 base, ImVec2 adjustable) {
+  return ImVec2(base.x + adjustable.x, base.y + adjustable.y);
+}
+
 enum ToolType {
   Pencil,
   Circle,
@@ -69,16 +73,21 @@ private:
     this->last_point = mouse_pos;
   }
 
-  void HandleMouseDragging(ImVec2 mouse_pos) {
+  void HandleMouseDragging(ImVec2 mouse_pos, ImVec2 canvas_pos, ImDrawList* draw_list) {
+    // For Previews
+    ImVec2 adjusted_start = AdjustToBase(canvas_pos, this->last_point);
+    ImVec2 adjusted_end = AdjustToBase(canvas_pos, mouse_pos);
+    
     if (selected_tool.type == ToolType::Pencil) {
       this->drawn_objects.push_back(DrawnObject(this->selected_tool, this->last_point, mouse_pos));
       this->last_point = mouse_pos;
     } else if (selected_tool.type == ToolType::Line) {
-      // Preview
+      draw_list->AddLine(adjusted_start, adjusted_end, TranslateColor(selected_tool.color), selected_tool.size);
     } else if (selected_tool.type == ToolType::Rectangle) {
-      // Preview
+      draw_list->AddRect(adjusted_start, adjusted_end, TranslateColor(selected_tool.color), 0, 0, selected_tool.size);
     } else if (selected_tool.type == ToolType::Circle) {
-      // Preview
+      int radius = adjusted_end.x - adjusted_start.x;
+      draw_list->AddCircle(adjusted_start, radius > 0 ? radius : -radius, TranslateColor(selected_tool.color), 0, selected_tool.size);
     }
   }
 
@@ -116,6 +125,7 @@ private:
     ImGui::Begin("Asset Canvas", &this->is_open);
       ImVec2 canvas_size = ImGui::GetContentRegionAvail();
       ImVec2 canvas_pos = ImGui::GetCursorScreenPos();  
+      ImDrawList* draw_list = ImGui::GetWindowDrawList(); 
 
       ImGui::InvisibleButton("##Canvas", canvas_size);
       if (ImGui::IsItemHovered) {
@@ -127,7 +137,7 @@ private:
           }
           
           if (ImGui::IsMouseDown(0) && is_drawing) {
-            this->HandleMouseDragging(mouse_pos_in_canvas);
+            this->HandleMouseDragging(mouse_pos_in_canvas, canvas_pos, draw_list);
           }
           
           if (ImGui::IsMouseReleased(0)) {
@@ -136,7 +146,6 @@ private:
           }        
         }
       }
-      ImDrawList* draw_list = ImGui::GetWindowDrawList();
       this->DrawToCanvas(draw_list, canvas_pos);
     ImGui::End();
   }
