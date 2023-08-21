@@ -39,6 +39,7 @@ private:
   ImGuiWindowFlags DefaultWindowFlags() {
     ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
     flags |= ImGuiWindowFlags_NoResize;
+    flags |= ImGuiWindowFlags_NoScrollbar;
     return flags;
   }
 
@@ -76,7 +77,7 @@ private:
     }
   }
 
-  void DrawToCanvas(ImDrawList *draw_list, ImVec2 canvas_pos) {
+  void DrawToCanvas(ImDrawList *draw_list, ImVec2 canvas_pos, ImVec2 canvas_size) {
     for(size_t i = 0; i < this->current_asset->objects_drawn.size(); i++) {
       DrawnObject object = this->current_asset->objects_drawn.at(i);
       ImVec2 adjusted_end_vec = ImVec2(canvas_pos.x + object.end.x, canvas_pos.y + object.end.y);
@@ -99,6 +100,11 @@ private:
     string name_as_str = string(this->asset_fields.name);
     name_as_str = processName(name_as_str);
     if (name_as_str.size() == 0) return false;
+    if (this->asset_fields.size_x <= 0 || this->asset_fields.size_y <= 0) return false;
+
+    // Adjust for padding or something
+    this->asset_fields.size_x += 16;
+    this->asset_fields.size_y += 16;
 
     AssetModel* newAsset = new AssetModel(name_as_str, ImVec2(asset_fields.size_x, asset_fields.size_y));
     return ModelStorage::InsertAsset(newAsset);
@@ -121,6 +127,8 @@ private:
       if (ImGui::Button("Accept")) {
         if (InvokeNewAsset()) {
           memset(this->asset_fields.name, '\0', 64);
+          this->asset_fields.size_x = 0;
+          this->asset_fields.size_y = 0;
           this->is_new_modal_open = false;
         }
       }
@@ -128,32 +136,40 @@ private:
   }
 
   void ShowDrawingArea() {
-    ImGui::SetNextWindowSize(this->current_asset->canvas_size);
-    ImGui::Begin("Asset Canvas", &this->is_open, ImGuiWindowFlags_NoResize);
-      ImVec2 canvas_size = ImGui::GetContentRegionAvail();
-      ImVec2 canvas_pos = ImGui::GetCursorScreenPos();  
-      ImDrawList* draw_list = ImGui::GetWindowDrawList(); 
+    ImGui::Begin("Asset Canvas", &this->is_open);
+      ImDrawList* draw_list = ImGui::GetWindowDrawList();
+      if (this->current_asset != nullptr) {
+        if (ImGui::BeginChild("##Drawing_space", this->current_asset->canvas_size, true, ImGuiWindowFlags_NoScrollbar)) {
+          ImVec2 canvas_size = ImGui::GetContentRegionAvail();
+          ImVec2 canvas_pos = ImGui::GetCursorScreenPos();  
+          draw_list->AddRectFilled(canvas_pos,ImVec2(canvas_pos.x + canvas_size.x, canvas_pos.y + canvas_size.y), IM_COL32_WHITE);
 
-      ImGui::InvisibleButton("##Canvas", canvas_size);
-      if (ImGui::IsItemHovered) {
-        ImVec2 mouse_pos_in_canvas = ImVec2(ImGui::GetIO().MousePos.x - canvas_pos.x, ImGui::GetIO().MousePos.y - canvas_pos.y);
-        if (MouseInsideCanvas(mouse_pos_in_canvas, canvas_size)) {
-          if (ImGui::IsMouseDown(0) && !is_drawing) {
-            this->is_drawing = true;
-            this->HandleMouseDown(mouse_pos_in_canvas);
+          ImGui::InvisibleButton("##Canvas", canvas_size);  
+          if (ImGui::IsItemHovered) {
+            ImVec2 mouse_pos_in_canvas = ImVec2(ImGui::GetIO().MousePos.x - canvas_pos.x, ImGui::GetIO().MousePos.y - canvas_pos.y);
+            if (MouseInsideCanvas(mouse_pos_in_canvas, canvas_size)) {
+              if (ImGui::IsMouseDown(0) && !is_drawing) {
+                this->is_drawing = true;
+                this->HandleMouseDown(mouse_pos_in_canvas);
+              }
+              
+              if (ImGui::IsMouseDown(0) && is_drawing) {
+                this->HandleMouseDragging(mouse_pos_in_canvas, canvas_pos, draw_list);
+              }
+              
+              if (ImGui::IsMouseReleased(0)) {
+                this->is_drawing = false;
+                this->HandleMouseRelease(mouse_pos_in_canvas);
+              }        
+            } else if (this->is_drawing) {
+              this->is_drawing = false;
+            }
           }
+          this->DrawToCanvas(draw_list, canvas_pos, canvas_size);
           
-          if (ImGui::IsMouseDown(0) && is_drawing) {
-            this->HandleMouseDragging(mouse_pos_in_canvas, canvas_pos, draw_list);
-          }
-          
-          if (ImGui::IsMouseReleased(0)) {
-            this->is_drawing = false;
-            this->HandleMouseRelease(mouse_pos_in_canvas);
-          }        
+          ImGui::EndChild();
         }
       }
-      this->DrawToCanvas(draw_list, canvas_pos);
     ImGui::End();
   }
 
@@ -207,7 +223,7 @@ public:
   void create() override {
     if (this->is_open) {
       ShowDrawingControls();
-      if (this->current_asset != nullptr) ShowDrawingArea();
+      ShowDrawingArea();
       if (this->is_new_modal_open) ShowNewAssetModal();
     }
   }
