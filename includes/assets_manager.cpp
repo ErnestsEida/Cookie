@@ -28,6 +28,10 @@ private:
   ImVec2 last_point;
   float zoom_amount = 1.0f;
 
+  ImVec2 AdjustMouseForZoom(ImVec2 mouse_pos) {
+    return ImVec2(mouse_pos.x / this->zoom_amount, mouse_pos.y / this->zoom_amount);
+  }
+
   ////////////////////////////// FLAGS /////////////////////////////
 
   ImGuiColorEditFlags ColorPickerFlags() {
@@ -51,30 +55,31 @@ private:
   }
 
   void HandleMouseDown(ImVec2 mouse_pos) {
-    this->last_point = mouse_pos;
+    this->last_point = AdjustMouseForZoom(mouse_pos);
   }
 
   void HandleMouseDragging(ImVec2 mouse_pos, ImVec2 canvas_pos, ImDrawList* draw_list) {
     // For Previews
-    ImVec2 adjusted_start = AdjustToBase(canvas_pos, this->last_point);
+    ImVec2 adjusted_start = AdjustToBase(canvas_pos, ImVec2(this->last_point.x * this->zoom_amount, this->last_point.y * this->zoom_amount));
     ImVec2 adjusted_end = AdjustToBase(canvas_pos, mouse_pos);
+    float real_size = this->selected_tool.size * this->zoom_amount;
     
     if (selected_tool.type == ToolType::Pencil) {
-      this->current_asset->objects_drawn.push_back(DrawnObject(this->selected_tool, this->last_point, mouse_pos));
-      this->last_point = mouse_pos;
+      this->current_asset->objects_drawn.push_back(DrawnObject(this->selected_tool, this->last_point, AdjustMouseForZoom(mouse_pos)));
+      this->last_point = AdjustMouseForZoom(mouse_pos);
     } else if (selected_tool.type == ToolType::Line) {
-      draw_list->AddLine(adjusted_start, adjusted_end, PreviewColor(selected_tool.color), selected_tool.size);
+      draw_list->AddLine(adjusted_start, adjusted_end, PreviewColor(selected_tool.color), real_size);
     } else if (selected_tool.type == ToolType::Rectangle) {
-      draw_list->AddRect(adjusted_start, adjusted_end, PreviewColor(selected_tool.color), 0, 0, selected_tool.size);
+      draw_list->AddRect(adjusted_start, adjusted_end, PreviewColor(selected_tool.color), 0, 0, real_size);
     } else if (selected_tool.type == ToolType::Circle) {
       int radius = adjusted_end.x - adjusted_start.x;
-      draw_list->AddCircle(adjusted_start, radius > 0 ? radius : -radius, PreviewColor(selected_tool.color), 0, selected_tool.size);
+      draw_list->AddCircle(adjusted_start, radius > 0 ? radius : -radius, PreviewColor(selected_tool.color), 0, real_size);
     }
   }
 
   void HandleMouseRelease(ImVec2 mouse_pos) {
     if (!selected_tool.type == ToolType::Pencil) {
-      this->current_asset->objects_drawn.push_back(DrawnObject(this->selected_tool, this->last_point, mouse_pos));
+      this->current_asset->objects_drawn.push_back(DrawnObject(this->selected_tool, this->last_point, AdjustMouseForZoom(mouse_pos)));
     }
   }
 
