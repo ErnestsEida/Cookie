@@ -26,6 +26,7 @@ private:
   AssetModel* current_asset = nullptr;
   Tool selected_tool;
   ImVec2 last_point;
+  float zoom_amount = 1.0f;
 
   ////////////////////////////// FLAGS /////////////////////////////
 
@@ -80,16 +81,26 @@ private:
   void DrawToCanvas(ImDrawList *draw_list, ImVec2 canvas_pos, ImVec2 canvas_size) {
     for(size_t i = 0; i < this->current_asset->objects_drawn.size(); i++) {
       DrawnObject object = this->current_asset->objects_drawn.at(i);
-      ImVec2 adjusted_end_vec = ImVec2(canvas_pos.x + object.end.x, canvas_pos.y + object.end.y);
-      ImVec2 adjusted_start_vec = ImVec2(canvas_pos.x + object.start.x, canvas_pos.y + object.start.y);
+      // float zoom_factor = (canvas_size.x / this->current_asset->canvas_size.x);
+      float zoom_factor = this->zoom_amount;
       
+      float adjusted_start_x = object.start.x * zoom_factor;
+      float adjusted_start_y = object.start.y * zoom_factor;
+      ImVec2 adjusted_start_vec = ImVec2(canvas_pos.x + adjusted_start_x, canvas_pos.y + adjusted_start_y);
+
+      float adjusted_end_x = object.end.x * zoom_factor;
+      float adjustd_end_y = object.end.y * zoom_factor;
+      ImVec2 adjusted_end_vec = ImVec2(canvas_pos.x + adjusted_end_x, canvas_pos.y + adjustd_end_y);
+      
+      float real_size = object.size * this->zoom_amount;
+
       if (object.drawn_by == ToolType::Pencil || object.drawn_by == ToolType::Line) {
-        draw_list->AddLine(adjusted_start_vec, adjusted_end_vec, object.color, object.size);
+        draw_list->AddLine(adjusted_start_vec, adjusted_end_vec, object.color, real_size);
       } else if (object.drawn_by == ToolType::Rectangle) {
-        draw_list->AddRect(adjusted_start_vec, adjusted_end_vec, object.color, 0, 0, object.size);
+        draw_list->AddRect(adjusted_start_vec, adjusted_end_vec, object.color, 0, 0, real_size);
       } else if (object.drawn_by == ToolType::Circle) {
         int radius = adjusted_end_vec.x - adjusted_start_vec.x;
-        draw_list->AddCircle(adjusted_start_vec, radius > 0 ? radius : -radius, object.color, 0, object.size);
+        draw_list->AddCircle(adjusted_start_vec, radius > 0 ? radius : -radius, object.color, 0, real_size);
       }
     }
   }
@@ -139,7 +150,8 @@ private:
     ImGui::Begin("Asset Canvas", &this->is_open);
       ImDrawList* draw_list = ImGui::GetWindowDrawList();
       if (this->current_asset != nullptr) {
-        if (ImGui::BeginChild("##Drawing_space", this->current_asset->canvas_size, true, ImGuiWindowFlags_NoScrollbar)) {
+        ImVec2 adjusted_canvas_size_with_zoom = ImVec2(this->current_asset->canvas_size.x * zoom_amount, this->current_asset->canvas_size.y * zoom_amount);
+        if (ImGui::BeginChild("##Drawing_space", adjusted_canvas_size_with_zoom, true, ImGuiWindowFlags_NoScrollbar)) {
           ImVec2 canvas_size = ImGui::GetContentRegionAvail();
           ImVec2 canvas_pos = ImGui::GetCursorScreenPos();  
           draw_list->AddRectFilled(canvas_pos,ImVec2(canvas_pos.x + canvas_size.x, canvas_pos.y + canvas_size.y), IM_COL32_WHITE);
@@ -200,6 +212,7 @@ private:
       ShowControlButtons();
       ImGui::ColorPicker4("##color_picker", this->selected_tool.color, ColorPickerFlags());
       ImGui::SliderInt("##Tool Size", &this->selected_tool.size, 1, 25);
+      ImGui::SliderFloat("Zoom", &this->zoom_amount, 1, 8);
       if (ImGui::BeginListBox("##Tool")) {
         if (ImGui::Selectable("Pencil", this->selected_tool.type == ToolType::Pencil)) {
           this->selected_tool.type = ToolType::Pencil;
