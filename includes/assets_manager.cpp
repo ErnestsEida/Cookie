@@ -1,4 +1,5 @@
 #pragma once
+#include "externals/imfilebrowser.h"
 #include "interfaces/IDisplayWindow.cpp"
 #include "helpers/AssetManagerIndex.cpp"
 #include "helpers/names.cpp"
@@ -22,6 +23,7 @@ private:
   bool is_new_modal_open = false;
   
   AssetModalFields asset_fields = AssetModalFields();
+  ImGui::FileBrowser fileDialog;
 
   AssetModel* current_asset = nullptr;
   Tool selected_tool;
@@ -194,6 +196,14 @@ private:
     if (ImGui::Button("Save Asset")) {}
     ImGui::SameLine();
     if (ImGui::Button("New Asset")) this->is_new_modal_open = true;
+    ImGui::SameLine();
+    if (ImGui::Button("Import")) this->fileDialog.Open();
+    this->fileDialog.Display();
+
+    if (this->fileDialog.HasSelected()) {
+      cout << this->fileDialog.GetSelected().string() << endl;
+      this->fileDialog.ClearSelected();
+    }
   }
 
   void ShowAssetsList() {
@@ -238,6 +248,11 @@ private:
   }
 
 public:
+  AssetsManager() {
+    this->fileDialog = ImGui::FileBrowser();
+    this->fileDialog.SetTitle("Select an image/spritesheet");
+  }
+
   void create() override {
     if (this->is_open) {
       ShowDrawingControls();
