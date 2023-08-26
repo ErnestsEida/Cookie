@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "imgui/imgui.h"
-#include "TextEditor.h"
+#include "./libs/TextEditor.h"
 #include "interfaces/IDisplayWindow.cpp"
 #include "data_structures/ScriptModel.cpp"
 #include "globals/model_storage.cpp"

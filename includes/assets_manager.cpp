@@ -1,5 +1,5 @@
 #pragma once
-#include "externals/imfilebrowser.h"
+#include "libs/imfilebrowser.h"
 #include "interfaces/IDisplayWindow.cpp"
 #include "helpers/AssetManagerIndex.cpp"
 #include "helpers/names.cpp"
@@ -128,6 +128,12 @@ private:
     return ModelStorage::InsertAsset(newAsset);
   }
 
+  bool InvokeAssetFromImage(string path) {
+    ImageAssetData image_data = CreateAssetFromImage(path);
+    AssetModel* newAsset = new AssetModel(image_data.name, ImVec2(image_data.width, image_data.height), image_data.drawn_objects);
+    return ModelStorage::InsertAsset(newAsset);
+  }
+
   bool IsAssetSelected(AssetModel* asset) {
     return asset->id == this->current_asset->id;
   }
@@ -201,7 +207,7 @@ private:
     this->fileDialog.Display();
 
     if (this->fileDialog.HasSelected()) {
-      cout << this->fileDialog.GetSelected().string() << endl;
+      this->InvokeAssetFromImage(this->fileDialog.GetSelected().string());
       this->fileDialog.ClearSelected();
     }
   }
