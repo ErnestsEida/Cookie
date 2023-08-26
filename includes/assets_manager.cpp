@@ -88,7 +88,6 @@ private:
   void DrawToCanvas(ImDrawList *draw_list, ImVec2 canvas_pos, ImVec2 canvas_size) {
     for(size_t i = 0; i < this->current_asset->objects_drawn.size(); i++) {
       DrawnObject object = this->current_asset->objects_drawn.at(i);
-      // float zoom_factor = (canvas_size.x / this->current_asset->canvas_size.x);
       float zoom_factor = this->zoom_amount;
       
       float adjusted_start_x = object.start.x * zoom_factor;
@@ -167,7 +166,7 @@ private:
         if (ImGui::BeginChild("##Drawing_space", adjusted_canvas_size_with_zoom, true, ImGuiWindowFlags_NoScrollbar)) {
           ImVec2 canvas_size = ImGui::GetContentRegionAvail();
           ImVec2 canvas_pos = ImGui::GetCursorScreenPos();  
-          draw_list->AddRectFilled(canvas_pos,ImVec2(canvas_pos.x + canvas_size.x, canvas_pos.y + canvas_size.y), IM_COL32_WHITE);
+          // draw_list->AddRectFilled(canvas_pos,ImVec2(canvas_pos.x + canvas_size.x, canvas_pos.y + canvas_size.y), IM_COL32_WHITE);
 
           ImGui::InvisibleButton("##Canvas", canvas_size);  
           if (ImGui::IsItemHovered) {

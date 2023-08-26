@@ -25,6 +25,7 @@ enum ToolType {
   Circle,
   Rectangle,
   Line,
+  ImageRenderer,
 };
 
 struct Tool {
@@ -79,7 +80,7 @@ string GetImagenameFrompPath(string path) {
 
 ImageAssetData CreateAssetFromImage(string path_to_image) {
   Tool image_tool;
-  image_tool.size = 1;
+  image_tool.size = 2;
   image_tool.type = ToolType::Line;
   
   vector<DrawnObject> drawn_objects;
@@ -87,16 +88,17 @@ ImageAssetData CreateAssetFromImage(string path_to_image) {
   stbi_uc* image = stbi_load(path_to_image.c_str(), &width, &height, &channels, 4);
   
   for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x) {
+    for (int x = 0; x < width - 1; ++x) {
         // GET CURRENT PIXEL DATA
         float rgba[4];
         int pixel_index = (y * width + x) * 4;
-        rgba[0] = image[pixel_index] / 255;
-        rgba[1] = image[pixel_index + 1] / 255;
-        rgba[2] = image[pixel_index + 2] / 255;
-        rgba[3] = image[pixel_index + 3] / 255;
+        rgba[0] = float(image[pixel_index]) / 255;
+        rgba[1] = float(image[pixel_index + 1]) / 255;
+        rgba[2] = float(image[pixel_index + 2]) / 255;
+        rgba[3] = float(image[pixel_index + 3]) / 255;
         // Create color
-        DrawnObject new_object(image_tool, ImVec2(x, y), ImVec2(x, y));
+        DrawnObject new_object(image_tool, ImVec2(x, y), ImVec2(x+1, y));
+        new_object.color = TranslateColor(rgba);
         drawn_objects.push_back(new_object);
     }
   }
