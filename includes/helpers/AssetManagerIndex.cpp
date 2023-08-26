@@ -74,10 +74,6 @@ string GetImagenameFrompPath(string path) {
   return words.at(words.size() - 1);
 }
 
-// TODO: Create a function that takes in the path of the file and converts it into AssetModel, which values
-// can be copied to the actual Asset that would be later inserted into the model_storage;
-// Most probably will need to draw pixel by pixel to the ImDrawList with lines as was said in some post
-
 ImageAssetData CreateAssetFromImage(string path_to_image) {
   Tool image_tool;
   image_tool.size = 2;

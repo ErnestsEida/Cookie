@@ -3,12 +3,19 @@
 #include <iostream>
 #include "../data_structures/ScriptModel.cpp"
 #include "../data_structures/AssetModel.cpp"
-
+#include "../data_structures/GameObject.cpp"
 
 using namespace std;
 
 class ModelStorage {
 private:
+  static bool GameObjectUnique(string id) {
+    for (size_t i = 0; i < ModelStorage::gameobjects.size();i++) {
+      if (ModelStorage::gameobjects.at(i)->id == id) return false;
+    }
+    return true;
+  }
+
   static bool ScriptUnique(string id) {
     for (size_t i = 0; i < ModelStorage::scripts.size();i++) {
       if (ModelStorage::scripts.at(i)->id == id) return false;
@@ -64,6 +71,24 @@ public:
   }
 
   // GameObjects
+  static vector<GameObject*> gameobjects;
+
+  static bool DeleteGameObject(string id) {
+    for(size_t i = 0; i < ModelStorage::gameobjects.size(); i++) {
+      if (gameobjects.at(i)->id == id) {
+        gameobjects.erase(gameobjects.begin() + i);
+        gameobjects.shrink_to_fit();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static bool InsertGameObject(GameObject* gameobject) {
+    if (gameobject == nullptr || !GameObjectUnique(gameobject->id)) return false;
+    ModelStorage::gameobjects.push_back(gameobject);
+    return true;
+  }
 
   // GameRooms
 
