@@ -2,14 +2,39 @@
 #include "interfaces/IDisplayWindow.cpp"
 #include "globals/model_storage.cpp"
 
+struct NewGameobjectFields {
+  char name[64] = "";
+  float x = 0;
+  float y = 0;
+  float z = 0;
+};
+
 class GameObjectBuilder : public IDisplayWindow {
 private:
   bool size_was_set = false;
+
+
+  void ShowNewGameObjectForm() {
+    if (ImGui::BeginPopupModal("New GameObject Form", NULL, ImGuiWindowFlags_NoResize))
+    {
+      if (ImGui::Button("Accept", ImVec2(115, 30))) {}
+      ImGui::SameLine();
+      if (ImGui::Button("Cancel", ImVec2(115, 30))) ImGui::CloseCurrentPopup();
+      ImGui::EndPopup();
+    }
+  }
+
+  void ShowGameObjectControls() 
+  {
+    if (ImGui::Button("Create", ImVec2(115, 30))) ImGui::OpenPopup("New GameObject Form");
+    ShowNewGameObjectForm();
+  }
 
   void ShowGameObjectInspector()
   {
     ImVec2 avail_space = ImGui::GetContentRegionAvail();
     ImGui::BeginChild("##GameObject Index", ImVec2(250, avail_space.y), true);
+      ShowGameObjectControls();
       ImGui::Text("GameObject Index");
       avail_space = ImGui::GetContentRegionAvail();
       if (ImGui::BeginListBox("##gameobject_inspector_list", avail_space))
