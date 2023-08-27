@@ -3,7 +3,7 @@
 #include <iostream>
 #include "../data_structures/ScriptModel.cpp"
 #include "../data_structures/AssetModel.cpp"
-#include "../data_structures/GameObject.cpp"
+#include "../data_structures/GameObjectModel.cpp"
 
 using namespace std;
 
@@ -71,7 +71,7 @@ public:
   }
 
   // GameObjects
-  static vector<GameObject*> gameobjects;
+  static vector<GameObjectModel*> gameobjects;
 
   static bool DeleteGameObject(string id) {
     for(size_t i = 0; i < ModelStorage::gameobjects.size(); i++) {
@@ -84,7 +84,7 @@ public:
     return false;
   }
 
-  static bool InsertGameObject(GameObject* gameobject) {
+  static bool InsertGameObject(GameObjectModel* gameobject) {
     if (gameobject == nullptr || !GameObjectUnique(gameobject->id)) return false;
     ModelStorage::gameobjects.push_back(gameobject);
     return true;
@@ -96,3 +96,4 @@ public:
 
 vector<ScriptModel*> ModelStorage::scripts = vector<ScriptModel*>();
 vector<AssetModel*> ModelStorage::assets = vector<AssetModel*>();
+vector<GameObjectModel*> ModelStorage::gameobjects = vector<GameObjectModel*>();
