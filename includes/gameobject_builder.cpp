@@ -4,20 +4,28 @@
 
 struct NewGameobjectFields {
   char name[64] = "";
-  float x = 0;
-  float y = 0;
-  float z = 0;
+  float coords[3] = {0, 0, 0};
 };
 
 class GameObjectBuilder : public IDisplayWindow {
 private:
   bool size_was_set = false;
+  NewGameobjectFields new_fields;
 
+  bool InvokeNewGameObject()
+  {
+
+  }
 
   void ShowNewGameObjectForm() {
     if (ImGui::BeginPopupModal("New GameObject Form", NULL, ImGuiWindowFlags_NoResize))
     {
-      if (ImGui::Button("Accept", ImVec2(115, 30))) {}
+      ImGui::InputText("Name", new_fields.name, 64);
+      ImGui::InputFloat3("[x|y|z]", new_fields.coords);
+      if (ImGui::Button("Accept", ImVec2(115, 30)))
+      {
+        if (InvokeNewGameObject()) ImGui::CloseCurrentPopup();
+      }
       ImGui::SameLine();
       if (ImGui::Button("Cancel", ImVec2(115, 30))) ImGui::CloseCurrentPopup();
       ImGui::EndPopup();
