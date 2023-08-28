@@ -39,18 +39,46 @@ private:
 
   void ShowColliderModal() {}
 
-  void ShowScriptSelectModal() {}
+  void ShowScriptSelectModal()
+  {
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+    flags |= ImGuiWindowFlags_NoMove;
+    if (ImGui::BeginPopupModal("Script List", NULL, flags)) 
+    {
+      ImVec2 avail = ImGui::GetContentRegionAvail();
+      if (ImGui::BeginListBox("##script_select_list", ImVec2(400, 550)))
+      {
+        for(size_t i = 0; i < ModelStorage::scripts.size(); i++) {
+          ScriptModel* script = ModelStorage::scripts.at(i);
+          if (ImGui::Selectable(script->name.c_str()))
+          {
+            ImGui::CloseCurrentPopup();
+          }
+        }
+        ImGui::EndListBox();  
+      }
+
+      if (ImGui::Button("Cancel", ImVec2(400, 30))) ImGui::CloseCurrentPopup();
+      ImGui::EndPopup();
+    }
+  }
 
   void ShowChildSelectModal() {}
 
   // ================================== COMPONENTS ==================================
 
-  void ShowComponentSelectionWindow() {
-    if (ImGui::BeginPopupContextItem("add_component_context")) {
+  void ShowComponentSelectionWindow()
+  {
+    if (ImGui::BeginPopupContextItem("add_component_context"))
+    {
       if (ImGui::Button("New SpriteRenderer")) {}
+      ShowSpriteRendererModal();
       if (ImGui::Button("New Collider")) {}
-      if (ImGui::Button("New Script")) {}
+      ShowColliderModal();
+      if (ImGui::Button("New Script")) ImGui::OpenPopup("Script List");
+      ShowScriptSelectModal();
       if (ImGui::Button("New Child")) {}
+      ShowChildSelectModal();
       ImGui::EndPopup();
     }
   }
@@ -113,6 +141,10 @@ private:
     ImGui::SameLine();
     ImVec2 avail_space = ImGui::GetContentRegionAvail();
     ImGui::BeginChild("##Gameobject_details", ImVec2(400, avail_space.y), true);
+      ShowSpriteRendererModal();
+      ShowColliderModal();
+      ShowScriptSelectModal();
+      ShowChildSelectModal();
       if (selected_object != nullptr)
       {
         string complete_text = "Selected --> [ " + selected_object->name + " ]";
@@ -125,7 +157,7 @@ private:
       } else 
       {
         ImGui::Text("No GameObject is currently selected...");
-      } 
+      }
     ImGui::EndChild();
   }
 
