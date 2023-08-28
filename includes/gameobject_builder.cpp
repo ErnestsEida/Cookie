@@ -1,30 +1,73 @@
 #pragma once
 #include "interfaces/IDisplayWindow.cpp"
 #include "globals/model_storage.cpp"
+#include "helpers/names.cpp"
 
 struct NewGameobjectFields {
   char name[64] = "";
-  float coords[3] = {0, 0, 0};
+  float coords[2] = {0, 0};
+  int z_index = 0;
 };
 
 class GameObjectBuilder : public IDisplayWindow {
 private:
   bool size_was_set = false;
   NewGameobjectFields new_fields;
+  GameObjectModel* selected_object = nullptr;
+
+  // ============================================== MISCELANEOUS =====================================================
+
+  bool isSelected(GameObjectModel* gameobject) {
+    if (selected_object != nullptr) {
+      return gameobject->id == selected_object->id;
+    }
+    return false;
+  }
 
   bool InvokeNewGameObject()
   {
+    string name_as_str = processName(string(new_fields.name));
+    if (name_as_str.length() == 0) return false;
 
+    GameObjectModel* new_gameobject = new GameObjectModel(name_as_str, new_fields.coords[0], new_fields.coords[1], new_fields.z_index);
+    return ModelStorage::InsertGameObject(new_gameobject);
+  }
+
+  // ============================================== SELECTION/CREATION MODALS =================================================
+
+  void ShowSpriteRendererModal() {}
+
+  void ShowColliderModal() {}
+
+  void ShowScriptSelectModal() {}
+
+  void ShowChildSelectModal() {}
+
+  // ================================== COMPONENTS ==================================
+
+  void ShowComponentSelectionWindow() {
+    if (ImGui::BeginPopupContextItem("add_component_context")) {
+      if (ImGui::Button("New SpriteRenderer")) {}
+      if (ImGui::Button("New Collider")) {}
+      if (ImGui::Button("New Script")) {}
+      if (ImGui::Button("New Child")) {}
+      ImGui::EndPopup();
+    }
   }
 
   void ShowNewGameObjectForm() {
     if (ImGui::BeginPopupModal("New GameObject Form", NULL, ImGuiWindowFlags_NoResize))
     {
-      ImGui::InputText("Name", new_fields.name, 64);
-      ImGui::InputFloat3("[x|y|z]", new_fields.coords);
+      ImGui::InputText("name", new_fields.name, 64);
+      ImGui::InputFloat2("[x|y]", new_fields.coords, "%.2f");
+      ImGui::InputInt("z-index", &new_fields.z_index, 1, 100);
       if (ImGui::Button("Accept", ImVec2(115, 30)))
       {
-        if (InvokeNewGameObject()) ImGui::CloseCurrentPopup();
+        if (InvokeNewGameObject()) 
+        {
+          new_fields = NewGameobjectFields();
+          ImGui::CloseCurrentPopup();
+        }
       }
       ImGui::SameLine();
       if (ImGui::Button("Cancel", ImVec2(115, 30))) ImGui::CloseCurrentPopup();
@@ -50,7 +93,7 @@ private:
         for(size_t i = 0; i < ModelStorage::gameobjects.size(); i++) 
         {
           GameObjectModel* gameobject = ModelStorage::gameobjects.at(i);
-          if (ImGui::Selectable(gameobject->name.c_str())) {}
+          if (ImGui::Selectable(gameobject->name.c_str(), isSelected(gameobject))) selected_object = gameobject;
         }
         ImGui::EndListBox();
       }
@@ -62,7 +105,6 @@ private:
     ImGui::SameLine();
     ImVec2 avail_space = ImGui::GetContentRegionAvail();
     ImGui::BeginChild("##Gameobject_workarea", ImVec2(avail_space.x - 415, avail_space.y), true);
-    ImGui::Text("Workarea");
     ImGui::EndChild();
   }
 
@@ -71,10 +113,23 @@ private:
     ImGui::SameLine();
     ImVec2 avail_space = ImGui::GetContentRegionAvail();
     ImGui::BeginChild("##Gameobject_details", ImVec2(400, avail_space.y), true);
-      ImGui::Text("Details");
+      if (selected_object != nullptr)
+      {
+        string complete_text = "Selected --> [ " + selected_object->name + " ]";
+        ImGui::Text(complete_text.c_str());
+
+        ShowComponentSelectionWindow();
+        if (ImGui::Button("Add [+]", ImVec2(400, 40))) {
+          ImGui::OpenPopup("add_component_context");
+        }
+      } else 
+      {
+        ImGui::Text("No GameObject is currently selected...");
+      } 
     ImGui::EndChild();
   }
 
+// ======================================================================================================
 public:
   void create() override
   {
