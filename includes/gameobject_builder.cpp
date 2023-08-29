@@ -17,6 +17,15 @@ private:
 
   // ============================================== MISCELANEOUS =====================================================
 
+  // Basically we give back all gameobjects EXCEPT for currently selected
+  vector<GameObjectModel*> SelectableGameObjects() {
+    vector<GameObjectModel*> result;
+    for(size_t i = 0; i < ModelStorage::gameobjects.size(); i++) {
+      if (ModelStorage::gameobjects.at(i)->id != selected_object->id) result.push_back(ModelStorage::gameobjects.at(i));
+    }
+    return result;
+  }
+
   bool isSelected(GameObjectModel* gameobject) {
     if (selected_object != nullptr) {
       return gameobject->id == selected_object->id;
@@ -35,9 +44,59 @@ private:
 
   // ============================================== SELECTION/CREATION MODALS =================================================
 
-  void ShowSpriteRendererModal() {}
+  void ShowSpriteRendererModal()
+  {
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+    flags |= ImGuiWindowFlags_NoMove;
+    float size[2] = { 0, 0 };
+    float offset[2] = { 0, 0 };
+    if (ImGui::BeginPopupModal("Add SpriteRenderer", NULL, flags)) 
+    {
 
-  void ShowColliderModal() {}
+      ImGui::Text("Preset shapes");
+      if (ImGui::BeginListBox("## Preset Selection", ImVec2(300, 40))) 
+      {
+        if (ImGui::Selectable("Circle")) {}
+        if (ImGui::Selectable("Rectangle")) {}
+        ImGui::EndListBox();
+      }
+
+      ImGui::Text("Animations");
+      if (ImGui::BeginListBox("## Animation Selection", ImVec2(300, 80)))
+      {
+        // Load animations
+        // ...
+        // else if no animations are present
+        string empty_text = "No animations were found...";
+        auto windowWidth = ImGui::GetWindowSize().x;
+        auto textWidth   = ImGui::CalcTextSize(empty_text.c_str()).x;
+        ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+        ImGui::Text(empty_text.c_str());
+        ImGui::EndListBox();
+      }
+
+      if (ImGui::Button("Accept", ImVec2(300, 30))) ImGui::CloseCurrentPopup();
+      if (ImGui::Button("Cancel", ImVec2(300, 30))) ImGui::CloseCurrentPopup();
+      ImGui::EndPopup();
+    }
+  }
+
+  void ShowColliderModal()
+  {
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+    flags |= ImGuiWindowFlags_NoMove;
+    float size[2] = { 0, 0 };
+    float offset[2] = { 0, 0 };
+    if (ImGui::BeginPopupModal("Add Collider", NULL, flags)) 
+    {
+      ImGui::InputFloat2("Size (X, Y)", size, "%.2f");
+      ImGui::InputFloat2("Offset (X, Y)", offset, "%.2f");
+
+      if (ImGui::Button("Accept", ImVec2(300, 30))) ImGui::CloseCurrentPopup();
+      if (ImGui::Button("Cancel", ImVec2(300, 30))) ImGui::CloseCurrentPopup();
+      ImGui::EndPopup();
+    }
+  }
 
   void ShowScriptSelectModal()
   {
@@ -63,7 +122,30 @@ private:
     }
   }
 
-  void ShowChildSelectModal() {}
+  void ShowChildSelectModal()
+  {
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+    flags |= ImGuiWindowFlags_NoMove;
+    if (ImGui::BeginPopupModal("GameObject List", NULL, flags)) 
+    {
+      ImVec2 avail = ImGui::GetContentRegionAvail();
+      if (ImGui::BeginListBox("##script_select_list", ImVec2(400, 550)))
+      {
+        vector<GameObjectModel*> gameobjects = SelectableGameObjects();
+        for(size_t i = 0; i < gameobjects.size(); i++) {
+          GameObjectModel* gameobject = gameobjects.at(i);
+          if (ImGui::Selectable(gameobject->name.c_str()))
+          {
+            ImGui::CloseCurrentPopup();
+          }
+        }
+        ImGui::EndListBox();  
+      }
+
+      if (ImGui::Button("Cancel", ImVec2(400, 30))) ImGui::CloseCurrentPopup();
+      ImGui::EndPopup();
+    }
+  }
 
   // ================================== COMPONENTS ==================================
 
@@ -71,13 +153,13 @@ private:
   {
     if (ImGui::BeginPopupContextItem("add_component_context"))
     {
-      if (ImGui::Button("New SpriteRenderer")) {}
+      if (ImGui::Button("New SpriteRenderer")) ImGui::OpenPopup("Add SpriteRenderer");
       ShowSpriteRendererModal();
-      if (ImGui::Button("New Collider")) {}
+      if (ImGui::Button("New Collider")) ImGui::OpenPopup("Add Collider");
       ShowColliderModal();
       if (ImGui::Button("New Script")) ImGui::OpenPopup("Script List");
       ShowScriptSelectModal();
-      if (ImGui::Button("New Child")) {}
+      if (ImGui::Button("New Child")) ImGui::OpenPopup("GameObject List");
       ShowChildSelectModal();
       ImGui::EndPopup();
     }
