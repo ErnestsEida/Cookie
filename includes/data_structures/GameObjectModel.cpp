@@ -11,10 +11,40 @@ enum GameObjectChildType {
   SpriteRenderer,
 };
 
+enum PresetShapeType {
+  Circle,
+  Rectangle,
+};
+
+enum RendererType {
+  Animation,
+  Preset,
+};
+
+// GOC - GameObjectChild
+struct GOC_ColliderData {
+  float size[2] = { 0, 0 };
+  float offset[2] = { 0, 0 };
+};
+
+struct GOC_RendererData {
+  RendererType type = RendererType::Preset;
+  PresetShapeType shape = PresetShapeType::Rectangle;
+  float shape_size[2] = { 0, 0 }; // IF RendererType::Preset
+  string animation_id = ""; // IF RendererType::Animation
+};
+
+struct GOC_NodeData {
+  string node_id = "";
+};
+// ====================
+
 class GameObjectChild {
 public:
   GameObjectChildType type;
-  string child_id = ""; // Used for 'node' type children, to store another gameobjects id, so it can be linked together
+  GOC_ColliderData collider_data;
+  GOC_RendererData renderer_data;
+  GOC_NodeData node_data;
 };
 
 class GameObjectModel

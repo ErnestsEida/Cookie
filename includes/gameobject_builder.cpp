@@ -72,6 +72,7 @@ private:
         auto textWidth   = ImGui::CalcTextSize(empty_text.c_str()).x;
         ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
         ImGui::Text(empty_text.c_str());
+
         ImGui::EndListBox();
       }
 
