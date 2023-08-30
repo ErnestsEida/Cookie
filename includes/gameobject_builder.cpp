@@ -15,7 +15,61 @@ private:
   NewGameobjectFields new_fields;
   GameObjectModel* selected_object = nullptr;
 
+  float child_size[2] = { 0, 0 };
+  float child_offset[2] = { 0, 0 };
+  float child_node_offset[3] = { 0, 0, 0 };
+
   // ============================================== MISCELANEOUS =====================================================
+
+  // Just reset all child placeholder values to zero (0); The amounts are so small that i dont see the need for a loop
+  void ResetChildVariables() {
+    child_offset[0] = 0;
+    child_offset[1] = 0;
+    child_size[0] = 0;
+    child_size[1] = 0;
+    child_node_offset[0] = 0;
+    child_node_offset[1] = 0;
+    child_node_offset[2] = 0;
+  }
+
+  bool RemoveScriptFromObject(ScriptModel* script) {
+    for(size_t i = 0; i < selected_object->script_ids.size(); i++) {
+      if (selected_object->script_ids.at(i) == script->id) {
+        selected_object->script_ids.erase(selected_object->script_ids.begin() + i);
+        selected_object->script_ids.shrink_to_fit();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  vector<ScriptModel*> GetCurrentGameobjectScripts() {
+    vector<ScriptModel*> all_scripts = ModelStorage::scripts;
+    vector<ScriptModel*> result;
+
+    for(size_t i = 0; i < all_scripts.size(); i++) {
+      ScriptModel* script = all_scripts.at(i);
+      if (result.size() == selected_object->script_ids.size()) break; // No need to iterate through vectors, if there are no scripts added
+
+      for(size_t u = 0; selected_object->script_ids.size(); u++) {
+        if (selected_object->script_ids.at(u) == script->id) {
+          result.push_back(script);
+          break;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  vector<GameObjectChild> GetChildrenByType(GameObjectChildType type) {
+    vector<GameObjectChild> parsed_children;
+    for(size_t i = 0; i < selected_object->children.size(); i++) {
+      GameObjectChild child = selected_object->children.at(i);
+      if (child.type == type) parsed_children.push_back(child);
+    }
+    return parsed_children;
+  }
 
   // Basically we give back all gameobjects EXCEPT for currently selected
   vector<GameObjectModel*> SelectableGameObjects() {
@@ -48,8 +102,6 @@ private:
   {
     ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
     flags |= ImGuiWindowFlags_NoMove;
-    float size[2] = { 0, 0 };
-    float offset[2] = { 0, 0 };
     if (ImGui::BeginPopupModal("Add SpriteRenderer", NULL, flags)) 
     {
 
@@ -86,14 +138,19 @@ private:
   {
     ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
     flags |= ImGuiWindowFlags_NoMove;
-    float size[2] = { 0, 0 };
-    float offset[2] = { 0, 0 };
     if (ImGui::BeginPopupModal("Add Collider", NULL, flags)) 
     {
-      ImGui::InputFloat2("Size (X, Y)", size, "%.2f");
-      ImGui::InputFloat2("Offset (X, Y)", offset, "%.2f");
+      ImGui::InputFloat2("Size (X, Y)", child_size, "%.2f");
+      ImGui::InputFloat2("Offset (X, Y)", child_offset, "%.2f");
 
-      if (ImGui::Button("Accept", ImVec2(300, 30))) ImGui::CloseCurrentPopup();
+      if (ImGui::Button("Accept", ImVec2(300, 30)))
+      {
+        GOC_ColliderData collider_data(ImVec2(child_size[0], child_size[1]), ImVec2(child_offset[0], child_offset[1]));
+        GameObjectChild new_child(collider_data);
+        selected_object->children.push_back(new_child);
+        ResetChildVariables();
+        ImGui::CloseCurrentPopup();
+      }
       if (ImGui::Button("Cancel", ImVec2(300, 30))) ImGui::CloseCurrentPopup();
       ImGui::EndPopup();
     }
@@ -112,6 +169,7 @@ private:
           ScriptModel* script = ModelStorage::scripts.at(i);
           if (ImGui::Selectable(script->name.c_str()))
           {
+            selected_object->script_ids.push_back(script->id);
             ImGui::CloseCurrentPopup();
           }
         }
@@ -129,14 +187,18 @@ private:
     flags |= ImGuiWindowFlags_NoMove;
     if (ImGui::BeginPopupModal("GameObject List", NULL, flags)) 
     {
-      ImVec2 avail = ImGui::GetContentRegionAvail();
-      if (ImGui::BeginListBox("##script_select_list", ImVec2(400, 550)))
+      ImGui::InputFloat3("Offset[X Y Z]", child_node_offset, "%.2f");
+      if (ImGui::BeginListBox("##node_select_list", ImVec2(400, 550)))
       {
         vector<GameObjectModel*> gameobjects = SelectableGameObjects();
         for(size_t i = 0; i < gameobjects.size(); i++) {
           GameObjectModel* gameobject = gameobjects.at(i);
           if (ImGui::Selectable(gameobject->name.c_str()))
-          {
+          { 
+            GOC_NodeData node_data(gameobject->id, child_node_offset);
+            GameObjectChild new_child(node_data);
+            selected_object->children.push_back(new_child);
+            ResetChildVariables();
             ImGui::CloseCurrentPopup();
           }
         }
@@ -219,25 +281,46 @@ private:
     ImGui::EndChild();
   }
 
+  void ShowDetailsChildTree() {
+    vector<ScriptModel*> scripts_for_object = GetCurrentGameobjectScripts();
+    string scripts_header = "Scripts (" + to_string(scripts_for_object.size()) +  ")";
+    if (ImGui::TreeNode(scripts_header.c_str()))
+    {
+      for(size_t i = 0; i < scripts_for_object.size(); i++) {
+        ScriptModel* current_script = scripts_for_object.at(i);
+        if (ImGui::CollapsingHeader(current_script->name.c_str()))
+        {
+          ImVec2 space = ImGui::GetContentRegionAvail();
+          if (ImGui::Button("Edit", ImVec2(space.x / 2, 25))) {}
+          ImGui::SameLine();
+          if (ImGui::Button("Remove", ImVec2(space.x / 2, 25))) RemoveScriptFromObject(current_script);
+        }
+      }
+      ImGui::TreePop();
+    }
+    vector<GameObjectChild> node_children = GetChildrenByType(GameObjectChildType::Node);
+    vector<GameObjectChild> collider_chidren = GetChildrenByType(GameObjectChildType::Collider);
+    vector<GameObjectChild> renderer_children = GetChildrenByType(GameObjectChildType::SpriteRenderer);
+  }
+
   void ShowGameObjectDetails()
   {
     ImGui::SameLine();
     ImVec2 avail_space = ImGui::GetContentRegionAvail();
     ImGui::BeginChild("##Gameobject_details", ImVec2(400, avail_space.y), true);
-      ShowSpriteRendererModal();
-      ShowColliderModal();
-      ShowScriptSelectModal();
-      ShowChildSelectModal();
       if (selected_object != nullptr)
       {
         string complete_text = "Selected --> [ " + selected_object->name + " ]";
         ImGui::Text(complete_text.c_str());
 
+        ShowDetailsChildTree();
+
         ShowComponentSelectionWindow();
         if (ImGui::Button("Add [+]", ImVec2(400, 40))) {
           ImGui::OpenPopup("add_component_context");
         }
-      } else 
+      }
+      else 
       {
         ImGui::Text("No GameObject is currently selected...");
       }
