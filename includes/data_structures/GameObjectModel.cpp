@@ -62,6 +62,7 @@ struct GOC_NodeData {
 
 class GameObjectChild {
 public:
+  string id;
   GameObjectChildType type;
   GOC_ColliderData collider_data;
   GOC_RendererData renderer_data;
@@ -70,16 +71,19 @@ public:
   GameObjectChild() {}
 
   GameObjectChild(GOC_ColliderData data) {
+    this->id = Generator::GenerateID();
     this->type = GameObjectChildType::Collider;
     this->collider_data = data;
   }
 
   GameObjectChild(GOC_NodeData data) {
+    this->id = Generator::GenerateID();
     this->type = GameObjectChildType::Node;
     this->node_data = data;
   }
 
   GameObjectChild(GOC_RendererData data) {
+    this->id = Generator::GenerateID();
     this->type = GameObjectChildType::SpriteRenderer;
     this->renderer_data = data;
   }
@@ -94,7 +98,7 @@ public:
   float y = 0;
   int z = 0;
 
-  vector<GameObjectChild> children;
+  vector<GameObjectChild*> children;
   vector<string> script_ids;
   vector<string> asset_ids;
 

@@ -32,6 +32,19 @@ private:
     child_node_offset[2] = 0;
   }
 
+  bool RemoveChildFromObject(string child_id, GameObjectChildType type) {
+    for(size_t i = 0; i < selected_object->children.size(); i++) {
+      GameObjectChild* child = selected_object->children.at(i);
+      if (child->type == type && child->id == child_id) {
+        selected_object->children.erase(selected_object->children.begin() + i);
+        selected_object->children.shrink_to_fit();
+        return true;
+      } 
+    }
+
+    return false;
+  }
+
   bool RemoveScriptFromObject(ScriptModel* script) {
     for(size_t i = 0; i < selected_object->script_ids.size(); i++) {
       if (selected_object->script_ids.at(i) == script->id) {
@@ -62,11 +75,11 @@ private:
     return result;
   }
 
-  vector<GameObjectChild> GetChildrenByType(GameObjectChildType type) {
-    vector<GameObjectChild> parsed_children;
+  vector<GameObjectChild*> GetChildrenByType(GameObjectChildType type) {
+    vector<GameObjectChild*> parsed_children;
     for(size_t i = 0; i < selected_object->children.size(); i++) {
-      GameObjectChild child = selected_object->children.at(i);
-      if (child.type == type) parsed_children.push_back(child);
+      GameObjectChild* child = selected_object->children.at(i);
+      if (child->type == type) parsed_children.push_back(child);
     }
     return parsed_children;
   }
@@ -146,7 +159,7 @@ private:
       if (ImGui::Button("Accept", ImVec2(300, 30)))
       {
         GOC_ColliderData collider_data(ImVec2(child_size[0], child_size[1]), ImVec2(child_offset[0], child_offset[1]));
-        GameObjectChild new_child(collider_data);
+        GameObjectChild* new_child = new GameObjectChild(collider_data);
         selected_object->children.push_back(new_child);
         ResetChildVariables();
         ImGui::CloseCurrentPopup();
@@ -196,7 +209,7 @@ private:
           if (ImGui::Selectable(gameobject->name.c_str()))
           { 
             GOC_NodeData node_data(gameobject->id, child_node_offset);
-            GameObjectChild new_child(node_data);
+            GameObjectChild* new_child = new GameObjectChild(node_data);
             selected_object->children.push_back(new_child);
             ResetChildVariables();
             ImGui::CloseCurrentPopup();
@@ -288,6 +301,7 @@ private:
     {
       for(size_t i = 0; i < scripts_for_object.size(); i++) {
         ScriptModel* current_script = scripts_for_object.at(i);
+
         if (ImGui::CollapsingHeader(current_script->name.c_str()))
         {
           ImVec2 space = ImGui::GetContentRegionAvail();
@@ -298,9 +312,49 @@ private:
       }
       ImGui::TreePop();
     }
-    vector<GameObjectChild> node_children = GetChildrenByType(GameObjectChildType::Node);
-    vector<GameObjectChild> collider_chidren = GetChildrenByType(GameObjectChildType::Collider);
-    vector<GameObjectChild> renderer_children = GetChildrenByType(GameObjectChildType::SpriteRenderer);
+
+    vector<GameObjectChild*> node_children = GetChildrenByType(GameObjectChildType::Node);
+    string node_children_header = "Child nodes (" + to_string(node_children.size()) + ")";
+    if (ImGui::TreeNode(node_children_header.c_str())) 
+    {
+      for(size_t i = 0; i < node_children.size(); i++) {
+        GameObjectChild* node_child = node_children.at(i);
+        GameObjectModel* child_object = ModelStorage::FindGameObject(node_child->node_data.node_id);
+        string child_name = child_object->name + "##" + to_string(i);
+
+        if (ImGui::CollapsingHeader(child_name.c_str()))
+        {
+          ImVec2 avail = ImGui::GetContentRegionAvail();
+          ImGui::InputFloat3("Offset [X Y Z]", node_child->node_data.offset);
+
+          if (ImGui::Button("Edit", ImVec2(avail.x / 2, 25))) this->selected_object = child_object;
+          ImGui::SameLine();
+          if (ImGui::Button("Remove", ImVec2(avail.x / 2, 25))) RemoveChildFromObject(node_child->id, GameObjectChildType::Node);
+        }
+      }
+      ImGui::TreePop();
+    }
+
+    vector<GameObjectChild*> collider_chidren = GetChildrenByType(GameObjectChildType::Collider);
+    string collider_children_header = "Colliders(" + to_string(collider_chidren.size()) + ")";
+    if (ImGui::TreeNode(collider_children_header.c_str()))
+    {
+      for(size_t i = 0; i < collider_chidren.size(); i++) {
+        GameObjectChild* collider = collider_chidren.at(i);
+        string collider_name = "Collider " + to_string(i);
+
+        if (ImGui::CollapsingHeader(collider_name.c_str()))
+        {
+          ImVec2 avail = ImGui::GetContentRegionAvail();
+          ImGui::InputFloat2("Size (X Y)", collider->collider_data.size);
+          ImGui::InputFloat2("Offset (X Y)", collider->collider_data.offset);
+          if (ImGui::Button("Remove", ImVec2(avail.x, 25))) RemoveChildFromObject(collider->id, GameObjectChildType::Collider);
+        }
+      }
+      ImGui::TreePop();
+    }
+
+    vector<GameObjectChild*> renderer_children = GetChildrenByType(GameObjectChildType::SpriteRenderer);
   }
 
   void ShowGameObjectDetails()

@@ -90,6 +90,13 @@ public:
     return true;
   }
 
+  static GameObjectModel* FindGameObject(string id) {
+    for(size_t i = 0; i < gameobjects.size(); i++) {
+      if (gameobjects.at(i)->id == id) return gameobjects.at(i);
+    }
+    return nullptr;
+  }
+
   // GameRooms
 
 };
