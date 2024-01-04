@@ -7,7 +7,7 @@ Cookie is a **GAME ENGINE** made in C++ on top of SFML graphics library
    - [Windows](#windows)
    - [MacOS](#windows)
 
-2. [Steps to test](#building-your-first-game)
+2. [Steps to test](#steps-to-test)
 3. [API](#api)
 
 ## Prerequisites
