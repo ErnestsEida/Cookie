@@ -30,12 +30,14 @@ brew install sfml
 **STEP 4:** Paste the following code in `main.cpp` and put correct path to includes folder
 ```cpp
 #include "{path_to_includes}/CookieEngine.cpp";
-#include "{path_to_includes}/Gameroom.cpp";
 
 // Create a new class that inherits from Gameroom
-class TemplateRoom : public Gameroom {
+class TemplateRoom : public GameRoom {
 public:
-    vector<GameObject*> GenerateObjects() override {} // Define gamerooms virtual method
+    // Define gamerooms virtual method
+    vector<GameObject*> GenerateObjects() override {
+      return vector<GameObject*>();
+    }
 };
 
 int main(){
