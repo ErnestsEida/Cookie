@@ -27,7 +27,8 @@ brew install sfml
 **STEP 1:** Download/Clone the repository from the version branch you want to work with.  
 **STEP 2:** Copy `/includes` folder to your working projects directory.  
 **STEP 3:** Create a `main.cpp` file that will serve as the entry point for the program.  
-**STEP 4:** Paste the following code in `main.cpp` and put correct path to includes folder
+**STEP 4:** Paste the following code in `main.cpp` and put correct path to includes folder.   
+**STEP 5:** You can find compiliation and running instructions in `run` file
 ```cpp
 #include "{path_to_includes}/CookieEngine.cpp";
 
