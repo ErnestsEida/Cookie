@@ -30,7 +30,7 @@ brew install sfml
 **STEP 4:** Paste the following code in `main.cpp` and put correct path to includes folder.   
 **STEP 5:** You can find compiliation and running instructions in `run` file
 ```cpp
-#include "{path_to_includes}/CookieEngine.cpp";
+#include "{path_to_includes}/CookieEngine.cpp"
 
 // Create a new class that inherits from Gameroom
 class TemplateRoom : public GameRoom {
