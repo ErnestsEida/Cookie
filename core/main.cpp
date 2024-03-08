@@ -1,18 +1,26 @@
-#include <iostream>
 #include "includes/CookieEngine.cpp"
-#include "demo/Template.cpp"
 
-using namespace std;
+// Create a new class that inherits from Gameroom
+class TemplateRoom : public GameRoom {
+public:
+  // Define gamerooms virtual method
+  vector<GameObject *> GenerateObjects() override {
+    return vector<GameObject *>();
+  }
+};
 
 int main() {
-  GameRoom::AddRoom("x", new Template());
-  GameRoom::AddRoom("y", new Template2());
+  // Add TemplateRoom to Global gameroom vector
+  GameRoom::AddRoom("FirstRoom", new TemplateRoom());
 
-  CookieCore *e = new CookieCore();
+  // Create engine object
+  CookieCore *engine = new CookieCore();
 
-  e->CreateWindow(1280, 720);
-  e->ChangeRoom("x");
-  e->Start();
-  
+  // Setup engine
+  engine->CreateWindow(1280, 720);
+  engine->ChangeRoom("FirstRoom");
+
+  // Start the engine
+  engine->Start();
   return 0;
 }

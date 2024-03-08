@@ -1,5 +1,0 @@
-#!/bin/bash
-rm imgui.ini
-make clean
-make
-./cookie
