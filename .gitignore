@@ -1,9 +1,3 @@
-# Gui part
-.vscode
-obj/*.o
-imgui.ini
-cookie
-
 # Core part
 core/demo
-core/main.cpp
+core/*.cpp

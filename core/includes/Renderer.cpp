@@ -1,6 +1,6 @@
 #pragma once
-#include "Gameobject.cpp"
 #include "Animation.cpp"
+#include "Gameobject.cpp"
 
 enum ShapeType {
   Circle,
@@ -9,25 +9,27 @@ enum ShapeType {
 
 class Renderer : public GameObject {
 private:
-  Drawable* mainDrawable = nullptr;
-  Animation* animation = nullptr;
+  Drawable *mainDrawable = nullptr;
+  Animation *animation = nullptr;
 
 public:
-  void SetShape(Vector2f size = Vector2f(10, 10), ShapeType shape_type = ShapeType::Circle) {
+  Renderer(int x = 0, int y = 0, int z = 0, string id = "none")
+      : GameObject(id, x, y, z) {}
+
+  void SetShape(Vector2f size = Vector2f(10, 10),
+                ShapeType shape_type = ShapeType::Circle) {
     if (shape_type == ShapeType::Circle) {
-      CircleShape* shape = new CircleShape(size.x);
+      CircleShape *shape = new CircleShape(size.x);
       this->mainDrawable = shape;
     } else {
-      RectangleShape* shape = new RectangleShape(size);
+      RectangleShape *shape = new RectangleShape(size);
       this->mainDrawable = shape;
     }
   }
 
-  void SetShape(Shape* shape) {
-    this->mainDrawable = shape;
-  }
+  void SetShape(Shape *shape) { this->mainDrawable = shape; }
 
-  void SetAnimation(Animation* animation) {
+  void SetAnimation(Animation *animation) {
     this->animation = animation;
     this->mainDrawable = this->animation->GetFrame();
   }
