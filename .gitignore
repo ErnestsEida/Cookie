@@ -1,3 +1,5 @@
-# Core part
-core/demo
-core/*.cpp
+# Demo project exclusion
+demo
+
+# Generated executable
+executable
