@@ -4,8 +4,12 @@
 
 using namespace std;
 
+void ass(int& x) {
+  x = 20;
+}
+
 int main() {
-  CookieEngine* engine = new CookieEngine();
-  engine->Start();
+  CookieEngine engine;
+  engine.Start();
   return 0;
 }

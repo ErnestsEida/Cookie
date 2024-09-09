@@ -5,20 +5,31 @@
 #include <SFML/Graphics.hpp>
 
 #include "Profiler.cpp"
-#include "helpers/C_RenderWindow.cpp"
+#include "helpers/RenderWindowManager.cpp"
+#include "helpers/SceneManager.cpp"
+#include "KeyInput.cpp"
 
 using namespace std;
 using namespace sf;
 
 class CookieEngine {
 private:
-  bool closeWindowFlag = false;
+  bool closeWindow = false;
+
+  void validateTick() { /* TODO*/ }
+
+  void setDeltaTime(chrono::_V2::system_clock::time_point& tp1, chrono::_V2::system_clock::time_point& tp2) {
+    tp2 = chrono::system_clock::now();
+    chrono::duration<float> elapsedTime = tp2 - tp1;
+    tp1 = tp2;
+    deltaTime = elapsedTime.count();
+  }
 
 public:
+  RenderWindowManager windowManager = RenderWindowManager();
+  
   static float deltaTime;
   static CookieEngine* singleton;
-
-  C_RenderWindow renderWindow = C_RenderWindow();
 
   CookieEngine() {
     if (singleton == nullptr) {
@@ -28,27 +39,42 @@ public:
     else Profiler::Error("FATAL: Cannot create two instances of CookieEngine at a time");
   }
 
+  void RunOnCloseCallbacks() { /* TODO */} 
+
+  void Stop() {
+    this->closeWindow = true;
+  }
+
   void Start() {
-    auto tp1 = chrono::system_clock::now();
-    auto tp2 = chrono::system_clock::now();
-  
-    while (this->renderWindow.window->isOpen()) {
-      if (this->closeWindowFlag) this->renderWindow.window->close();
-    
-      // Calculate deltaTime
-      tp2 = chrono::system_clock::now();
-      chrono::duration<float> elapsedTime = tp2 - tp1;
-      tp1 = tp2;
-      deltaTime = elapsedTime.count();
+    // Setup variables
+    Event event;
+    chrono::_V2::system_clock::time_point tp1 = chrono::system_clock::now();
+    chrono::_V2::system_clock::time_point tp2 = chrono::system_clock::now();
 
-      // SFML Events
-      Event event;
-      while(this->renderWindow.window->pollEvent(event)) {
-        if (event.type == Event::Closed) this->renderWindow.window->close();
+    while(windowManager.window->isOpen()) {
+      /* Close on exit and on closeWindow = true */
+      while(windowManager.window->pollEvent(event)) {
+        if (event.type == Event::Closed) { 
+          closeWindow = true;
+          break;
+        }
       }
+      if (closeWindow) { 
+        RunOnCloseCallbacks();
+        windowManager.window->close(); 
+        break;
+      }
+      /* ============================== */
 
-      this->renderWindow.window->clear();
-      this->renderWindow.window->display();
+      validateTick();
+      setDeltaTime(tp1, tp2);
+      KeyInput::UpdateKeyStates();
+
+      // Perform Updates
+      // Run collision callbacks
+      // Gather drawables
+
+      windowManager.performDraw();
     }
   }
 };
