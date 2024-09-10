@@ -7,6 +7,7 @@
 #include "Profiler.cpp"
 #include "helpers/RenderWindowManager.cpp"
 #include "helpers/SceneManager.cpp"
+#include "Gameobject.cpp"
 #include "KeyInput.cpp"
 
 using namespace std;
@@ -18,6 +19,12 @@ private:
 
   void validateTick() { /* TODO*/ }
 
+  void RunOnCloseCallbacks() { /* TODO */}
+
+  bool isScenePopulated() {
+    return !sceneManager.currentScene->objects.empty();
+  } 
+  
   void setDeltaTime(chrono::_V2::system_clock::time_point& tp1, chrono::_V2::system_clock::time_point& tp2) {
     tp2 = chrono::system_clock::now();
     chrono::duration<float> elapsedTime = tp2 - tp1;
@@ -27,19 +34,17 @@ private:
 
 public:
   RenderWindowManager windowManager = RenderWindowManager();
+  SceneManager sceneManager = SceneManager();
   
   static float deltaTime;
   static CookieEngine* singleton;
 
   CookieEngine() {
     if (singleton == nullptr) {
-
-      singleton = this; 
+      singleton = this;
     }
     else Profiler::Error("FATAL: Cannot create two instances of CookieEngine at a time");
   }
-
-  void RunOnCloseCallbacks() { /* TODO */} 
 
   void Stop() {
     this->closeWindow = true;
@@ -70,9 +75,21 @@ public:
       setDeltaTime(tp1, tp2);
       KeyInput::UpdateKeyStates();
 
-      // Perform Updates
-      // Run collision callbacks
-      // Gather drawables
+      if (isScenePopulated()) {
+        for(GameObject* gameobject : sceneManager.currentScene->objects) {
+          gameobject->beforeUpdate();
+          gameobject->processChildren("before");
+
+          gameobject->onUpdate();
+          gameobject->processChildren("on");
+
+          gameobject->afterUpdate();
+          gameobject->processChildren("after");
+          
+          gameobject->processColliders();
+          gameobject->drawables();
+        }
+      }
 
       windowManager.performDraw();
     }

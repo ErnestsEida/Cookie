@@ -8,11 +8,21 @@ using namespace std;
 class Scene {
 public:
   static vector<pair<string, Scene*>> scenes;
-  
-  static void AddScene(string title, Scene* scene) {
-    if (scene == nullptr) Profiler::Warning("[ADDING ROOM] Room '" + title + "' is a null pointer");
+  bool persistant = false;
+  vector<GameObject*> objects = vector<GameObject*>();
 
-    scenes.push_back(make_pair(title, scene));
+  static void AddScene(string title, Scene* scene) {
+    bool valid = true;
+
+    if (scene == nullptr) {
+      Profiler::Warning("[SCENE ADD] Scene '" + title + "' is a null pointer");
+      valid = false;
+    } else if (GetScene(title) != nullptr) {
+      Profiler::Warning("[SCENE ADD] Key '" + title + "' is already set");
+      valid = false;
+    }
+
+    if (valid) scenes.push_back(make_pair(title, scene));
   }
 
   static Scene* GetScene(string title) {
@@ -26,6 +36,14 @@ public:
     }
     
     return scene;
+  }
+
+  Scene(bool persistant = false) {
+    this->persistant = persistant;
+  }
+
+  virtual void reset() final {
+    this->objects = GenerateObjects();
   }
 
   virtual vector<GameObject*> GenerateObjects() = 0;

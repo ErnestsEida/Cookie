@@ -1,5 +1,40 @@
 #pragma once
 
-class SceneManager {
+#include "../Scene.cpp"
+#include "../Gameobject.cpp"
 
+class SceneManager {
+private:
+  void Init() {
+    if (Scene::scenes.empty()) Profiler::Error("FATAL(SceneManager): At least 1 scene has to be added - add it via Scene::AddScene(...)");
+    this->performChange(Scene::scenes.at(0).second);
+  }
+
+  void performChange(Scene* nextScene) {
+    if (!nextScene->persistant) {
+      nextScene->reset();
+    }
+
+    this->currentScene = nextScene;
+  }
+public:
+  Scene* currentScene;
+
+  SceneManager() {
+    Init();
+  }
+
+  void resetCurrentScene() {
+    this->currentScene->reset();
+  }
+
+  void changeScene(string sceneName) {
+    Scene* nextScene = Scene::GetScene(sceneName);
+
+    if (nextScene == nullptr) {
+      Profiler::Warning("[SCENE CHANGE] Scene named '" + sceneName + "' does not exist in scene registry - add it via Scene::AddScene(...)");
+    } else {
+      this->performChange(nextScene);
+    }
+  }
 };
