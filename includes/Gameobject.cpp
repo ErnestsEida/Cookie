@@ -1,7 +1,9 @@
 #pragma once
 #include <iostream>
+#include <vector>
 
 #include "helpers/Generators.cpp"
+#include "interfaces/IDrawable.cpp"
 
 using namespace std;
 
@@ -12,8 +14,31 @@ const string defaultName = "object";
 class GameObject {
 private:
   vector<GameObject*> children = vector<GameObject*>();
+  vector<IDrawable> drawables = vector<IDrawable>();
+
+  Vector2f realCoords() {
+    float tempX, tempY = 0;
+
+    if (this->parent != nullptr) {
+      tempX = this->parent->x;
+      tempY = this->parent->y;
+    }
+    tempX += this->x;
+    tempY += this->y;
+
+    return Vector2f(tempX, tempY);
+  }
+
+  void processDrawables() {
+    for(IDrawable drawable : drawables) {
+      drawable.z = this->z;
+      Transformable* transform = drawable.transformable();
+      transform->setPosition(realCoords());
+    }
+  }
 public:
   GameObject* parent = nullptr;
+  bool isVisible = true;
   string objectName;
   string tag;
   string id;
@@ -54,11 +79,27 @@ public:
     /* TODO */
   }
 
-  virtual void drawables() final {
-    /* TODO */
+  virtual void addDrawable(Drawable* drawable) final {
+    this->drawables.push_back(IDrawable(drawable, this->z));
   }
 
-  virtual void beforeUpdate() = 0;
-  virtual void onUpdate() = 0;
-  virtual void afterUpdate() = 0;
+  virtual vector<IDrawable> gDrawables(vector<IDrawable> &result) final {    
+    if (!this->drawables.empty() && this->isVisible) {
+      this->processDrawables();
+      result.insert(result.end(), this->drawables.begin(), this->drawables.end());
+    }
+
+    if (this->children.empty()) return result;
+
+    for(GameObject* child : this->children) {
+      vector<IDrawable> childDrawables = child->gDrawables(result);
+      result.insert(result.end(), childDrawables.begin(), childDrawables.end());
+    }
+
+    return result;
+  }
+
+  virtual void beforeUpdate() {};
+  virtual void onUpdate() {};
+  virtual void afterUpdate() {};
 };

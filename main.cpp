@@ -2,10 +2,16 @@
 
 #include "includes/CookieEngine.cpp"
 #include "includes/Scene.cpp"
+#include "includes/drawables/Figure.cpp"
 
 using namespace std;
 
 class TemplateObject : public GameObject {
+public:
+  TemplateObject() : GameObject(100, 100) {
+    addChild(new Figure());
+  }
+
   void beforeUpdate() {}
 
   void onUpdate() {

@@ -52,6 +52,7 @@ public:
 
   void Start() {
     // Setup variables
+    vector<IDrawable> sceneDrawables = vector<IDrawable>();
     Event event;
     chrono::_V2::system_clock::time_point tp1 = chrono::system_clock::now();
     chrono::_V2::system_clock::time_point tp2 = chrono::system_clock::now();
@@ -75,6 +76,9 @@ public:
       setDeltaTime(tp1, tp2);
       KeyInput::UpdateKeyStates();
 
+      sceneDrawables.clear();
+      sceneDrawables.shrink_to_fit();
+
       if (isScenePopulated()) {
         for(GameObject* gameobject : sceneManager.currentScene->objects) {
           gameobject->beforeUpdate();
@@ -87,11 +91,11 @@ public:
           gameobject->processChildren("after");
           
           gameobject->processColliders();
-          gameobject->drawables();
+          gameobject->gDrawables(sceneDrawables);
         }
       }
 
-      windowManager.performDraw();
+      windowManager.performDraw(sceneDrawables);
     }
   }
 };

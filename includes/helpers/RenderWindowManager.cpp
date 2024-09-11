@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include "../interfaces/IDrawable.cpp"
 
 using namespace std;
 using namespace sf;
@@ -32,9 +33,17 @@ public:
     this->Init();
   }
 
-  void performDraw() {
+  void performDraw(vector<IDrawable> drawables) {
     isWindowPresent();
     this->window->clear();
+    
+    if (!drawables.empty()) {
+      IDrawable::Sort(drawables);
+      for(IDrawable drawable : drawables) {
+        this->window->draw(*drawable.source);
+      }
+    }
+
     this->window->display();
   }
 };
