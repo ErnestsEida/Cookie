@@ -2,20 +2,34 @@
 
 #include "includes/CookieEngine.cpp"
 #include "includes/Scene.cpp"
-#include "includes/drawables/Figure.cpp"
+#include "includes/drawables/SpriteRenderer.cpp"
 
 using namespace std;
 
+class CustomRenderer : public SpriteRenderer {
+public:
+  CustomRenderer(Animation* a) : SpriteRenderer(a) {
+    this->setScale(Vector2f(10, 10));
+  }
+};
+
 class TemplateObject : public GameObject {
+private:
+  Animation* walkAnimation = new Animation("demo/WALK.png", Vector2i(96, 96), 8);
+  float speed = 10;
 public:
   TemplateObject() : GameObject(100, 100) {
-    addChild(new Figure());
+    addChild(new CustomRenderer(walkAnimation));
   }
 
-  void beforeUpdate() {}
+  void beforeUpdate() {
+    if (KeyInput::OnKeyUp(Keyboard::Key::Escape)) CookieEngine::singleton->Stop();
+    if (KeyInput::OnKeyDown(Keyboard::Key::N)) CookieEngine::singleton->sceneManager.changeScene("main2");
+  }
 
   void onUpdate() {
-    if (KeyInput::OnKeyDown(Keyboard::Key::N)) CookieEngine::singleton->sceneManager.changeScene("main2");
+    x += (KeyInput::OnKey(Keyboard::Key::D) - KeyInput::OnKey(Keyboard::Key::A)) * speed * CookieEngine::deltaTime;
+    y += (KeyInput::OnKey(Keyboard::Key::S) - KeyInput::OnKey(Keyboard::Key::W)) * speed * CookieEngine::deltaTime;
   }
 
   void afterUpdate() {}

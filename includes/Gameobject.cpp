@@ -32,8 +32,10 @@ private:
   void processDrawables() {
     for(IDrawable drawable : drawables) {
       drawable.z = this->z;
-      Transformable* transform = drawable.transformable();
-      transform->setPosition(realCoords());
+      if (drawable.source != nullptr) {
+        Transformable* transform = drawable.transformable();
+        transform->setPosition(realCoords());
+      }
     }
   }
 public:

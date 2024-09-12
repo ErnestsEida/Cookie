@@ -2,6 +2,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "../interfaces/IDrawable.cpp"
+#include "../Profiler.cpp"
 
 using namespace std;
 using namespace sf;
@@ -40,6 +41,7 @@ public:
     if (!drawables.empty()) {
       IDrawable::Sort(drawables);
       for(IDrawable drawable : drawables) {
+        if (drawable.source == nullptr) continue;
         this->window->draw(*drawable.source);
       }
     }

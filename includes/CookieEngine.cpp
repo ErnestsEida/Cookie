@@ -29,7 +29,7 @@ private:
     tp2 = chrono::system_clock::now();
     chrono::duration<float> elapsedTime = tp2 - tp1;
     tp1 = tp2;
-    deltaTime = elapsedTime.count();
+    deltaTime = elapsedTime.count() * 60; // Multiply by 60 so its usable
   }
 
 public:
