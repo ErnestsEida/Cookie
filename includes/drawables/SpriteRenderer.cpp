@@ -107,6 +107,7 @@ public:
     this->drawable = animation->getSprite();
     this->setSize((Vector2f)animation->getSize());
     this->unfreeze();
+    this->animation->currentFrame = 0;
   }
 
   void onUpdate() {

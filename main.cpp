@@ -12,10 +12,11 @@ private:
   Animation* walkAnimation = new Animation("demo/WALK.png", Vector2i(96, 96), 8);
   SpriteRenderer* renderer = new SpriteRenderer(this->walkAnimation);
   float speed = 10;
-  Vector2f scale = Vector2f(4, 4);
+  Vector2f scale = Vector2f(3, 3);
 public:
   TemplateObject() : GameObject(0, 0) {
     addChild(this->renderer);
+    this->renderer->setScale(scale);
   }
 
   void beforeUpdate() {

@@ -34,10 +34,6 @@ private:
   }
 
 protected:
-  Vector2f origin = ORIGIN_MAP[OriginPoint::CENTER];
-  Vector2f scale = Vector2f(1, 1);
-  Vector2f size = Vector2f(0, 0);
-  float rotation = 0;
   Drawable* drawable = nullptr;
 
   void applyProps() {
@@ -48,6 +44,11 @@ protected:
   }
 
 public:
+  Vector2f origin = ORIGIN_MAP[OriginPoint::CENTER];
+  Vector2f scale = Vector2f(1, 1);
+  Vector2f size = Vector2f(0, 0);
+  float rotation = 0;
+
   BaseDrawable() {}
 
   void setSize(Vector2f size) {
