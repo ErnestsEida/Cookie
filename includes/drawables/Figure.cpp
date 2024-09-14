@@ -46,4 +46,13 @@ public:
     Shape* temp = dynamic_cast<Shape*>(this->drawable);
     temp->setFillColor(color);
   }
+
+  void setSize(Vector2f size) {
+    BaseDrawable::setSize(size);
+    if (this->type == ShapeType::Circle) {
+      dynamic_cast<CircleShape*>(this->drawable)->setRadius(size.x);
+    } else if (this->type == ShapeType::Rectangle) {
+      dynamic_cast<RectangleShape*>(this->drawable)->setSize(size);
+    }
+  }
 };

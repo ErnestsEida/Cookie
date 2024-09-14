@@ -34,18 +34,6 @@ public:
     }
   }
 
-  void freeze() {
-      this->freezeFrame = true;
-  }
-
-  void unfreeze() {
-      this->freezeFrame = false;
-  }
-
-  void toggleFreeze() {
-      this->freezeFrame = !this->freezeFrame;
-  }
-
   void setLoop(bool loop) {
       this->loop = loop;
   }
@@ -58,26 +46,26 @@ public:
       return this->sprite;
   }
 
+  Vector2i getSize() {
+    return this->frameSize;
+  }
+
   void NextFrame() {
     if (this->sprite == nullptr) return;
 
     IntRect textureRect = this->sprite->getTextureRect();
 
-    if (this->timer.getElapsedTime().asSeconds() > 1 / this->animation_speed) {
-        if (textureRect.left + this->frameSize.x >= (this->frameCount * this->frameSize.x)) {
-            if (loop) {
-                textureRect.left = 0;
-                this->currentFrame = 0;
-            } else {
-                this->freeze();
-            }
-        } else {
-            if (!this->freezeFrame) {
-                textureRect.left += this->frameSize.x;
-                this->currentFrame++;
-            }
+    if (this->timer.getElapsedTime().asSeconds() > (1 / this->animation_speed)) {
+      if (textureRect.left + this->frameSize.x >= (this->frameCount * this->frameSize.x)) {
+        if (loop) {
+          textureRect.left = 0;
+          this->currentFrame = 0;
         }
-        this->timer.restart();
+      } else {
+        textureRect.left += this->frameSize.x;
+        this->currentFrame++;
+      }
+      this->timer.restart();
     }
 
     this->sprite->setTextureRect(textureRect);
@@ -87,6 +75,7 @@ public:
 class SpriteRenderer : public BaseDrawable {
 private:
   Animation* animation = nullptr;
+  bool freezeFrame = false;
 public:
   SpriteRenderer(Animation* animation = nullptr) {
     if (animation != nullptr) {
@@ -96,13 +85,32 @@ public:
     this->addDrawable(this->drawable);
   }
 
+  void freeze() {
+    this->freezeFrame = true;
+  }
+
+  void unfreeze() {
+    this->freezeFrame = false;
+  }
+
+  void toggleFreeze() {
+    this->freezeFrame = !this->freezeFrame;
+  }
+
   void changeAnimation(Animation* animation) {
+    if (animation == nullptr) {
+      Profiler::Warning("[SpriteRenderer] Trying to assign an animation with value of nullptr");
+      return;
+    }
+
     this->animation = animation;
     this->drawable = animation->getSprite();
+    this->setSize((Vector2f)animation->getSize());
+    this->unfreeze();
   }
 
   void onUpdate() {
-    if (this->animation != nullptr) {
+    if (this->animation != nullptr && !freezeFrame) {
       this->animation->NextFrame();
     }
   }

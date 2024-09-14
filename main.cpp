@@ -3,23 +3,19 @@
 #include "includes/CookieEngine.cpp"
 #include "includes/Scene.cpp"
 #include "includes/drawables/SpriteRenderer.cpp"
+#include "includes/drawables/Figure.cpp"
 
 using namespace std;
-
-class CustomRenderer : public SpriteRenderer {
-public:
-  CustomRenderer(Animation* a) : SpriteRenderer(a) {
-    this->setScale(Vector2f(10, 10));
-  }
-};
 
 class TemplateObject : public GameObject {
 private:
   Animation* walkAnimation = new Animation("demo/WALK.png", Vector2i(96, 96), 8);
+  SpriteRenderer* renderer = new SpriteRenderer(this->walkAnimation);
   float speed = 10;
+  Vector2f scale = Vector2f(4, 4);
 public:
-  TemplateObject() : GameObject(100, 100) {
-    addChild(new CustomRenderer(walkAnimation));
+  TemplateObject() : GameObject(0, 0) {
+    addChild(this->renderer);
   }
 
   void beforeUpdate() {
@@ -28,11 +24,16 @@ public:
   }
 
   void onUpdate() {
-    x += (KeyInput::OnKey(Keyboard::Key::D) - KeyInput::OnKey(Keyboard::Key::A)) * speed * CookieEngine::deltaTime;
-    y += (KeyInput::OnKey(Keyboard::Key::S) - KeyInput::OnKey(Keyboard::Key::W)) * speed * CookieEngine::deltaTime;
+    int xDir = (KeyInput::OnKey(Keyboard::Key::D) - KeyInput::OnKey(Keyboard::Key::A));
+    int yDir = (KeyInput::OnKey(Keyboard::Key::S) - KeyInput::OnKey(Keyboard::Key::W));
+    x += xDir * speed * CookieEngine::deltaTime;
+    y += yDir * speed * CookieEngine::deltaTime;
+    if (xDir != 0) this->renderer->setScale(Vector2f(scale.x * xDir, scale.y));
   }
 
-  void afterUpdate() {}
+  void afterUpdate() {
+    if (KeyInput::OnKeyDown(Keyboard::B)) this->renderer->toggleFreeze();
+  }
 };
 
 class TemplateScene : public Scene {

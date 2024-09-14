@@ -29,8 +29,12 @@ private:
     return Vector2f(real_x, real_y);
   }
 
+  Transformable* transformable() {
+    return dynamic_cast<Transformable*>(this->drawable);
+  }
+
 protected:
-  Vector2f origin = ORIGIN_MAP[OriginPoint::TOP_LEFT];
+  Vector2f origin = ORIGIN_MAP[OriginPoint::CENTER];
   Vector2f scale = Vector2f(1, 1);
   Vector2f size = Vector2f(0, 0);
   float rotation = 0;
@@ -46,23 +50,28 @@ protected:
 public:
   BaseDrawable() {}
 
-  virtual void setSize(Vector2f size) final {
+  void setSize(Vector2f size) {
     this->size = size;
+    applyProps();
   }
 
   virtual void setOrigin(OriginPoint point) final {
     this->origin = ORIGIN_MAP[point];
+    applyProps();
   }
 
   virtual void setCustomOrigin(Vector2f origin) final {
     this->origin = origin;
+    applyProps();
   }
 
   virtual void setScale(Vector2f scale) final {
     this->scale = scale;
+    applyProps();
   }
 
   virtual void setRotation(float angle) final {
     this->rotation = angle;
+    applyProps();
   }
 };
