@@ -29,7 +29,9 @@ public:
     int yDir = (KeyInput::OnKey(Keyboard::Key::S) - KeyInput::OnKey(Keyboard::Key::W));
     x += xDir * speed * CookieEngine::deltaTime;
     y += yDir * speed * CookieEngine::deltaTime;
-    if (xDir != 0) this->renderer->setScale(Vector2f(scale.x * xDir, scale.y));
+    if (xDir != 0) {
+      this->renderer->setScale(Vector2f(scale.x * xDir, scale.y));
+    } 
   }
 
   void afterUpdate() {

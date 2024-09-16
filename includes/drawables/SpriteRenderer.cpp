@@ -108,12 +108,12 @@ public:
     this->setAnimationSpeed(animation->getFrameCount());
     this->setSize((Vector2f)animation->getSize());
     this->unfreeze();
-    
+
     this->animation->currentFrame = 0;
   }
 
   void onUpdate() {
-    if (this->animation == nullptr && freezeFrame) return;
+    if (this->animation == nullptr || freezeFrame) return;
 
     if (this->timer.getElapsedTime().asSeconds() > (1 / this->animationSpeed)) {
       this->animation->NextFrame();
