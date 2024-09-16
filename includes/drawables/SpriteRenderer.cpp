@@ -8,19 +8,15 @@ using namespace std;
 
 class Animation {
 private:
-  float animation_speed;
   Vector2i frameSize;
   Texture texture;
   Sprite* sprite = nullptr;
-  bool freezeFrame = false;
-  int frameCount;
-  Clock timer;
+  uint frameCount;
   bool loop;
 public:
   int currentFrame = 0;
 
-  Animation(string pathToTexture, Vector2i frameSize, int frameCount, bool loop = true) {
-    this->animation_speed = frameCount;
+  Animation(string pathToTexture, Vector2i frameSize, uint frameCount, bool loop = true) {
     this->frameCount = frameCount;
     this->frameSize = frameSize;
     this->loop = loop;
@@ -38,10 +34,6 @@ public:
       this->loop = loop;
   }
 
-  void setAnimationSpeed(float animation_speed) {
-      this->animation_speed = animation_speed;
-  }
-
   Sprite* getSprite() {
       return this->sprite;
   }
@@ -50,22 +42,23 @@ public:
     return this->frameSize;
   }
 
+  uint getFrameCount() {
+    return this->frameCount;
+  }
+
   void NextFrame() {
     if (this->sprite == nullptr) return;
 
     IntRect textureRect = this->sprite->getTextureRect();
 
-    if (this->timer.getElapsedTime().asSeconds() > (1 / this->animation_speed)) {
-      if (textureRect.left + this->frameSize.x >= (this->frameCount * this->frameSize.x)) {
-        if (loop) {
-          textureRect.left = 0;
-          this->currentFrame = 0;
-        }
-      } else {
-        textureRect.left += this->frameSize.x;
-        this->currentFrame++;
+    if (textureRect.left + this->frameSize.x >= (int)(this->frameCount * this->frameSize.x)) {
+      if (loop) {
+        textureRect.left = 0;
+        this->currentFrame = 0;
       }
-      this->timer.restart();
+    } else {
+      textureRect.left += this->frameSize.x;
+      this->currentFrame++;
     }
 
     this->sprite->setTextureRect(textureRect);
@@ -76,6 +69,8 @@ class SpriteRenderer : public BaseDrawable {
 private:
   Animation* animation = nullptr;
   bool freezeFrame = false;
+  float animationSpeed = 1;
+  Clock timer;
 public:
   SpriteRenderer(Animation* animation = nullptr) {
     if (animation != nullptr) {
@@ -85,19 +80,23 @@ public:
     this->addDrawable(this->drawable);
   }
 
-  void freeze() {
+  virtual void freeze() final {
     this->freezeFrame = true;
   }
 
-  void unfreeze() {
+  virtual void unfreeze() final {
     this->freezeFrame = false;
   }
 
-  void toggleFreeze() {
+  virtual void toggleFreeze() final {
     this->freezeFrame = !this->freezeFrame;
   }
 
-  void changeAnimation(Animation* animation) {
+  virtual void setAnimationSpeed(float animationSpeed) final {
+    this->animationSpeed = animationSpeed;
+  }
+
+  virtual void changeAnimation(Animation* animation) final {
     if (animation == nullptr) {
       Profiler::Warning("[SpriteRenderer] Trying to assign an animation with value of nullptr");
       return;
@@ -105,14 +104,20 @@ public:
 
     this->animation = animation;
     this->drawable = animation->getSprite();
+    
+    this->setAnimationSpeed(animation->getFrameCount());
     this->setSize((Vector2f)animation->getSize());
     this->unfreeze();
+    
     this->animation->currentFrame = 0;
   }
 
   void onUpdate() {
-    if (this->animation != nullptr && !freezeFrame) {
+    if (this->animation == nullptr && freezeFrame) return;
+
+    if (this->timer.getElapsedTime().asSeconds() > (1 / this->animationSpeed)) {
       this->animation->NextFrame();
+      this->timer.restart();
     }
   }
 };
