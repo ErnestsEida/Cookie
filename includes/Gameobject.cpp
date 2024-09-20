@@ -16,27 +16,25 @@ private:
   vector<GameObject*> children = vector<GameObject*>();
   vector<IDrawable> drawables = vector<IDrawable>();
 
-  Vector2f realCoords() {
-    float tempX, tempY = 0;
-
-    if (this->parent != nullptr) {
-      tempX = this->parent->x;
-      tempY = this->parent->y;
-    }
-    tempX += this->x;
-    tempY += this->y;
-
-    return Vector2f(tempX, tempY);
-  }
-
   void processDrawables() {
     for(IDrawable drawable : drawables) {
       drawable.z = this->z;
       if (drawable.source != nullptr) {
         Transformable* transform = drawable.transformable();
-        transform->setPosition(realCoords());
+        transform->setPosition(this->realCoords());
       }
     }
+  }
+protected:
+  Vector2f realCoords() {
+    Vector2f parentPos = Vector2f(0, 0);
+    Vector2f myPos = Vector2f(this->x, this->y);
+    
+    if (this->parent != nullptr) {
+      parentPos = this->parent->realCoords();
+    }
+
+    return Vector2f(myPos.x + parentPos.x, myPos.y + parentPos.y);
   }
 public:
   GameObject* parent = nullptr;
@@ -73,13 +71,12 @@ public:
       } else if (regulator == "after") {
         child->afterUpdate();
       }
+
       child->processChildren(regulator);
     }
   }
 
-  virtual void processColliders() final {
-    /* TODO */
-  }
+  virtual void gColliders() final {}
 
   virtual void addDrawable(Drawable* drawable) final {
     this->drawables.push_back(IDrawable(drawable, this->z));

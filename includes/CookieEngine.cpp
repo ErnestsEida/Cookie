@@ -90,7 +90,7 @@ public:
           gameobject->afterUpdate();
           gameobject->processChildren("after");
           
-          gameobject->processColliders();
+          gameobject->gColliders();
           gameobject->gDrawables(sceneDrawables);
         }
       }

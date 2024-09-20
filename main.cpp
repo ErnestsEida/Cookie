@@ -4,19 +4,22 @@
 #include "includes/Scene.cpp"
 #include "includes/drawables/SpriteRenderer.cpp"
 #include "includes/drawables/Figure.cpp"
+#include "includes/Collider.cpp"
 
 using namespace std;
 
+class ChildObject : public GameObject {
+};
+
 class TemplateObject : public GameObject {
 private:
-  Animation* walkAnimation = new Animation("demo/WALK.png", Vector2i(96, 96), 8);
-  SpriteRenderer* renderer = new SpriteRenderer(this->walkAnimation);
   float speed = 10;
-  Vector2f scale = Vector2f(3, 3);
+  Figure* fig = new Figure(Vector2f(50, 100), ShapeType::Rectangle); 
+  Collider* collider = new Collider(Vector2f(50, 100));
 public:
-  TemplateObject() : GameObject(0, 0) {
-    addChild(this->renderer);
-    this->renderer->setScale(scale);
+  TemplateObject() : GameObject(100, 100) {
+    this->addChild(this->fig);
+    this->addChild(this->collider);
   }
 
   void beforeUpdate() {
@@ -29,13 +32,6 @@ public:
     int yDir = (KeyInput::OnKey(Keyboard::Key::S) - KeyInput::OnKey(Keyboard::Key::W));
     x += xDir * speed * CookieEngine::deltaTime;
     y += yDir * speed * CookieEngine::deltaTime;
-    if (xDir != 0) {
-      this->renderer->setScale(Vector2f(scale.x * xDir, scale.y));
-    } 
-  }
-
-  void afterUpdate() {
-    if (KeyInput::OnKeyDown(Keyboard::B)) this->renderer->toggleFreeze();
   }
 };
 

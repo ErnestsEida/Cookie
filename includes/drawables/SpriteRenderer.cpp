@@ -112,7 +112,7 @@ public:
     this->animation->currentFrame = 0;
   }
 
-  void onUpdate() {
+  virtual void onUpdate() final {
     if (this->animation == nullptr || freezeFrame) return;
 
     if (this->timer.getElapsedTime().asSeconds() > (1 / this->animationSpeed)) {
