@@ -80,20 +80,17 @@ public:
     this->drawables.push_back(IDrawable(drawable, this->z));
   }
 
-  virtual vector<IDrawable> gDrawables(vector<IDrawable> &result) final {    
+  virtual void gDrawables(vector<IDrawable> &result) final {    
     if (!this->drawables.empty() && this->isVisible) {
       this->processDrawables();
       result.insert(result.end(), this->drawables.begin(), this->drawables.end());
     }
 
-    if (this->children.empty()) return result;
+    if (this->children.empty()) return;
 
     for(GameObject* child : this->children) {
-      vector<IDrawable> childDrawables = child->gDrawables(result);
-      result.insert(result.end(), childDrawables.begin(), childDrawables.end());
+      child->gDrawables(result);
     }
-
-    return result;
   }
 
   virtual void beforeUpdate() {};

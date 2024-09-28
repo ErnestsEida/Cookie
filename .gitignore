@@ -6,3 +6,6 @@ executable
 
 # vscode
 .vscode
+
+# debuggin/profiling stuff
+callgrind.*
