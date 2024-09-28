@@ -5,14 +5,10 @@
 
 using namespace std;
 
-void defineScenes() {
-  Scene::AddScene("main", new MainScene);
-}
-
 int main() {
-  defineScenes();
+  Scene::AddScene("main", new MainScene());
 
-  CookieEngine engine;
-  engine.Start();
+  CookieEngine* engine = new CookieEngine();
+  engine->Start();
   return 0;
 }
