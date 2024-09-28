@@ -8,3 +8,5 @@ g++ -g -Wall main.cpp -o executable -lsfml-graphics -lsfml-window -lsfml-system 
 valgrind --tool=callgrind ./executable
 
 kcachegrind
+
+rm callgrind.out.*
