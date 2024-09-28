@@ -76,8 +76,6 @@ public:
     }
   }
 
-  virtual void gColliders() final {}
-
   virtual void addDrawable(Drawable* drawable) final {
     this->drawables.push_back(IDrawable(drawable, this->z));
   }

@@ -1,71 +1,17 @@
 #include <iostream>
 
 #include "includes/CookieEngine.cpp"
-#include "includes/Scene.cpp"
-#include "includes/drawables/SpriteRenderer.cpp"
-#include "includes/drawables/Figure.cpp"
-#include "includes/Collider.cpp"
+#include "demo/MainScene.cpp"
 
 using namespace std;
 
-class CustomCollider : public Collider {
-public:
-  CustomCollider() : Collider(Vector2f(50, 100)) {}
-};
-
-class TemplateObject : public GameObject {
-private:
-  float speed = 10;
-  Figure* fig = new Figure(Vector2f(50, 100), ShapeType::Rectangle); 
-  Collider* collider = new CustomCollider();
-public:
-  TemplateObject() : GameObject(100, 100) {
-    this->addChild(this->fig);
-    this->addChild(this->collider);
-  }
-
-  void beforeUpdate() {
-    if (KeyInput::OnKeyUp(Keyboard::Key::Escape)) CookieEngine::singleton->Stop();
-    if (KeyInput::OnKeyDown(Keyboard::Key::N)) CookieEngine::singleton->sceneManager.changeScene("main2");
-  }
-
-  void onUpdate() {
-    int xDir = (KeyInput::OnKey(Keyboard::Key::D) - KeyInput::OnKey(Keyboard::Key::A));
-    int yDir = (KeyInput::OnKey(Keyboard::Key::S) - KeyInput::OnKey(Keyboard::Key::W));
-    x += xDir * speed * CookieEngine::deltaTime;
-    y += yDir * speed * CookieEngine::deltaTime;
-  }
-};
-
-class StaticObject : public GameObject {
-public:
-  StaticObject() : GameObject(600, 600) {
-    this->addChild(new Collider(Vector2f(24, 24)));
-    this->addChild(new Figure(Vector2f(24, 24)));
-  }
-};
-
-class TemplateScene : public Scene {
-public:
-  vector<GameObject*> GenerateObjects() {
-    vector<GameObject*> r;
-    r.push_back(new TemplateObject);
-    r.push_back(new StaticObject);
-    return r;
-  }
-};
-
-class TemplateScene2 : public Scene {
-public:
-  vector<GameObject*> GenerateObjects() {
-    vector<GameObject*> r;
-    return r;
-  }
-};
+void defineScenes() {
+  Scene::AddScene("main", new MainScene);
+}
 
 int main() {
-  Scene::AddScene("main", new TemplateScene);
-  Scene::AddScene("main2", new TemplateScene2);
+  defineScenes();
+
   CookieEngine engine;
   engine.Start();
   return 0;

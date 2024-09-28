@@ -70,6 +70,8 @@ public:
   static vector<Collider*> activeColliders;
 
   static void reloadColliders() {
+    if (activeColliders.empty()) return;
+    
     vector<Collider*> result;
     for(Collider* col : activeColliders) {
       if (col == nullptr) continue;
