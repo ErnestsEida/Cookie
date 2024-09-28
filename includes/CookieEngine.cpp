@@ -8,6 +8,7 @@
 #include "helpers/RenderWindowManager.cpp"
 #include "helpers/SceneManager.cpp"
 #include "Gameobject.cpp"
+#include "Collider.cpp"
 #include "KeyInput.cpp"
 
 using namespace std;
@@ -78,6 +79,7 @@ public:
 
       sceneDrawables.clear();
       sceneDrawables.shrink_to_fit();
+      Collider::reloadColliders();
 
       if (isScenePopulated()) {
         for(GameObject* gameobject : sceneManager.currentScene->objects) {

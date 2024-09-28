@@ -8,14 +8,16 @@
 
 using namespace std;
 
-class ChildObject : public GameObject {
+class CustomCollider : public Collider {
+public:
+  CustomCollider() : Collider(Vector2f(50, 100)) {}
 };
 
 class TemplateObject : public GameObject {
 private:
   float speed = 10;
   Figure* fig = new Figure(Vector2f(50, 100), ShapeType::Rectangle); 
-  Collider* collider = new Collider(Vector2f(50, 100));
+  Collider* collider = new CustomCollider();
 public:
   TemplateObject() : GameObject(100, 100) {
     this->addChild(this->fig);
@@ -35,11 +37,20 @@ public:
   }
 };
 
+class StaticObject : public GameObject {
+public:
+  StaticObject() : GameObject(600, 600) {
+    this->addChild(new Collider(Vector2f(24, 24)));
+    this->addChild(new Figure(Vector2f(24, 24)));
+  }
+};
+
 class TemplateScene : public Scene {
 public:
   vector<GameObject*> GenerateObjects() {
     vector<GameObject*> r;
     r.push_back(new TemplateObject);
+    r.push_back(new StaticObject);
     return r;
   }
 };
