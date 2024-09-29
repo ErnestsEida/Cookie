@@ -11,7 +11,7 @@ private:
   }
 
   void performChange(Scene* nextScene) {
-    if (!nextScene->persistant) {
+    if (!nextScene->persistant || nextScene->objects.empty()) {
       nextScene->reset();
     }
 
@@ -36,5 +36,10 @@ public:
     } else {
       this->performChange(nextScene);
     }
+  }
+
+  void insertObject(GameObject* newObject) {
+    if (newObject == nullptr) Profiler::Warning("[SCENE MANAGER] Trying to insert new gameobject into scene with pointer to nullptr");
+    this->currentScene->objects.push_back(newObject);
   }
 };
