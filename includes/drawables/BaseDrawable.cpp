@@ -5,21 +5,36 @@
 
 using namespace sf;
 
-enum OriginPoint {
-  TOP_LEFT, TOP_CENTER, TOP_RIGHT,
-  CENTER_LEFT, CENTER, CENTER_RIGHT,
-  BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
+enum OriginPoint
+{
+  TOP_LEFT,
+  TOP_CENTER,
+  TOP_RIGHT,
+  CENTER_LEFT,
+  CENTER,
+  CENTER_RIGHT,
+  BOTTOM_LEFT,
+  BOTTOM_CENTER,
+  BOTTOM_RIGHT
 };
 
 const Vector2f ORIGIN_MAP[9] = {
-  Vector2f(0, 0), Vector2f(1, 0), Vector2f(2, 0),
-  Vector2f(0, 1), Vector2f(1, 1), Vector2f(2, 1),
-  Vector2f(0, 2), Vector2f(1, 2), Vector2f(2, 2),
+    Vector2f(0, 0),
+    Vector2f(1, 0),
+    Vector2f(2, 0),
+    Vector2f(0, 1),
+    Vector2f(1, 1),
+    Vector2f(2, 1),
+    Vector2f(0, 2),
+    Vector2f(1, 2),
+    Vector2f(2, 2),
 };
 
-class BaseDrawable : public GameObject {
+class BaseDrawable : public GameObject
+{
 private:
-  Vector2f CalculateOrigin() {
+  Vector2f CalculateOrigin()
+  {
     float half_x = this->size.x / 2;
     float half_y = this->size.y / 2;
 
@@ -29,15 +44,17 @@ private:
     return Vector2f(real_x, real_y);
   }
 
-  Transformable* transformable() {
-    return dynamic_cast<Transformable*>(this->drawable);
+  Transformable *transformable()
+  {
+    return dynamic_cast<Transformable *>(this->drawable);
   }
 
 protected:
-  Drawable* drawable = nullptr;
+  Drawable *drawable = nullptr;
 
-  void applyProps() {
-    Transformable* transformable = dynamic_cast<Transformable*>(this->drawable);
+  void applyProps()
+  {
+    Transformable *transformable = dynamic_cast<Transformable *>(this->drawable);
     transformable->setOrigin(CalculateOrigin());
     transformable->setScale(this->scale);
     transformable->setRotation(this->rotation);
@@ -51,27 +68,32 @@ public:
 
   BaseDrawable() {}
 
-  void setSize(Vector2f size) {
+  void setSize(Vector2f size)
+  {
     this->size = size;
     applyProps();
   }
 
-  virtual void setOrigin(OriginPoint point) final {
+  virtual void setOrigin(OriginPoint point) final
+  {
     this->origin = ORIGIN_MAP[point];
     applyProps();
   }
 
-  virtual void setCustomOrigin(Vector2f origin) final {
+  virtual void setCustomOrigin(Vector2f origin) final
+  {
     this->origin = origin;
     applyProps();
   }
 
-  virtual void setScale(Vector2f scale) final {
+  virtual void setScale(Vector2f scale) final
+  {
     this->scale = scale;
     applyProps();
   }
 
-  virtual void setRotation(float angle) final {
+  virtual void setRotation(float angle) final
+  {
     this->rotation = angle;
     applyProps();
   }

@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 namespace Utils {
   /*
     Should be used with care as this thread gets detached

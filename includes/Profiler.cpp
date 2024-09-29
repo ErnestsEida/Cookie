@@ -3,9 +3,11 @@
 
 using namespace std;
 
-class Profiler {
+class Profiler
+{
 private:
-    static void Message(string text, string color) {
+    static void Message(string text, string color)
+    {
         if (MESSAGES_ENABLED)
             cout << color << " " << text << " " << "\033[0m" << endl;
     }
@@ -18,20 +20,24 @@ public:
     static string BG_YELLOW;
     static string BG_GREEN;
 
-    static void Warning(string text) {
+    static void Warning(string text)
+    {
         Message(text, BG_YELLOW);
     }
 
-    static void Error(string text) {
+    static void Error(string text)
+    {
         Message(text, BG_RED);
         exit(69);
     }
 
-    static void Success(string text) {
+    static void Success(string text)
+    {
         Message(text, BG_GREEN);
     }
 
-    static void Info(string text) {
+    static void Info(string text)
+    {
         Message(text, FG_BLUE);
     }
 };

@@ -3,56 +3,67 @@
 #include <SFML/Graphics.hpp>
 #include "BaseDrawable.cpp"
 
-enum ShapeType {
+enum ShapeType
+{
   Rectangle,
   Circle,
 };
 
-class Figure : public BaseDrawable {
+class Figure : public BaseDrawable
+{
 private:
   ShapeType type;
 
-  void applyProps() {
+  void applyProps()
+  {
     BaseDrawable::applyProps();
-    Shape* shape = dynamic_cast<Shape*>(this->drawable);
+    Shape *shape = dynamic_cast<Shape *>(this->drawable);
     shape->setFillColor(Color::White);
   }
 
-  void BuildShape() {
-    if (this->type == ShapeType::Rectangle) 
-    { 
-      RectangleShape* holder = new RectangleShape();
+  void BuildShape()
+  {
+    if (this->type == ShapeType::Rectangle)
+    {
+      RectangleShape *holder = new RectangleShape();
       holder->setSize(this->size);
       this->drawable = holder;
-    } 
-    else if (this->type == ShapeType::Circle) 
+    }
+    else if (this->type == ShapeType::Circle)
     {
-      CircleShape* holder = new CircleShape();
+      CircleShape *holder = new CircleShape();
       holder->setRadius(this->size.x);
       this->drawable = holder;
     }
 
     this->applyProps();
   }
+
 public:
-  Figure(Vector2f size = Vector2f(0, 0), ShapeType type = ShapeType::Rectangle) : BaseDrawable() {
+  Figure(Vector2f size = Vector2f(0, 0), ShapeType type = ShapeType::Rectangle) : BaseDrawable()
+  {
     this->type = type;
     this->size = size;
     this->BuildShape();
     this->addDrawable(this->drawable);
   }
 
-  virtual void setColor(Color color) final {
-    Shape* temp = dynamic_cast<Shape*>(this->drawable);
+  virtual void setColor(Color color) final
+  {
+    Shape *temp = dynamic_cast<Shape *>(this->drawable);
     temp->setFillColor(color);
   }
 
-  void setSize(Vector2f size) {
+  void setSize(Vector2f size)
+  {
     BaseDrawable::setSize(size);
-    if (this->type == ShapeType::Circle) {
-      dynamic_cast<CircleShape*>(this->drawable)->setRadius(size.x);
-    } else if (this->type == ShapeType::Rectangle) {
-      dynamic_cast<RectangleShape*>(this->drawable)->setSize(size);
+    if (this->type == ShapeType::Circle)
+    {
+      dynamic_cast<CircleShape *>(this->drawable)->setRadius(size.x);
+    }
+    else if (this->type == ShapeType::Rectangle)
+    {
+      dynamic_cast<RectangleShape *>(this->drawable)->setSize(size);
     }
   }
 };

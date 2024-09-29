@@ -11,33 +11,41 @@ const int defaultCoord = 0;
 const string defaultTag = "";
 const string defaultName = "object";
 
-class GameObject {
+class GameObject
+{
 private:
-  vector<GameObject*> children = vector<GameObject*>();
+  vector<GameObject *> children = vector<GameObject *>();
   vector<IDrawable> drawables = vector<IDrawable>();
 
-  void processDrawables() {
-    for(IDrawable drawable : drawables) {
+  void processDrawables()
+  {
+    for (IDrawable drawable : drawables)
+    {
       drawable.z = this->z;
-      if (drawable.source != nullptr) {
-        Transformable* transform = drawable.transformable();
+      if (drawable.source != nullptr)
+      {
+        Transformable *transform = drawable.transformable();
         transform->setPosition(this->realCoords());
       }
     }
   }
+
 protected:
-  Vector2f realCoords() {
+  Vector2f realCoords()
+  {
     Vector2f parentPos = Vector2f(0, 0);
     Vector2f myPos = Vector2f(this->x, this->y);
-    
-    if (this->parent != nullptr) {
+
+    if (this->parent != nullptr)
+    {
       parentPos = this->parent->realCoords();
     }
 
     return Vector2f(myPos.x + parentPos.x, myPos.y + parentPos.y);
   }
+
 public:
-  GameObject* parent = nullptr;
+  GameObject *parent = nullptr;
   bool isVisible = true;
   string objectName;
   string tag;
@@ -46,7 +54,8 @@ public:
   float y;
   int z;
 
-  GameObject(int x = defaultCoord, int y = defaultCoord, int z = defaultCoord, string objectName = defaultName, string tag = defaultTag) {
+  GameObject(int x = defaultCoord, int y = defaultCoord, int z = defaultCoord, string objectName = defaultName, string tag = defaultTag)
+  {
     this->id = Generators::MakeUniqID("gameobject_");
     this->objectName = objectName;
     this->tag = tag;
@@ -55,20 +64,29 @@ public:
     this->z = z;
   }
 
-  virtual void addChild(GameObject* child) final {
+  virtual void addChild(GameObject *child) final
+  {
     child->parent = this;
     this->children.push_back(child);
   }
 
-  virtual void processChildren(string regulator) final {
-    if (children.empty()) return;
-  
-    for(GameObject* child : children) {
-      if (regulator == "before") {
+  virtual void processChildren(string regulator) final
+  {
+    if (children.empty())
+      return;
+
+    for (GameObject *child : children)
+    {
+      if (regulator == "before")
+      {
         child->beforeUpdate();
-      } else if (regulator == "on") {
+      }
+      else if (regulator == "on")
+      {
         child->onUpdate();
-      } else if (regulator == "after") {
+      }
+      else if (regulator == "after")
+      {
         child->afterUpdate();
       }
 
@@ -76,19 +94,24 @@ public:
     }
   }
 
-  virtual void addDrawable(Drawable* drawable) final {
+  virtual void addDrawable(Drawable *drawable) final
+  {
     this->drawables.push_back(IDrawable(drawable, this->z));
   }
 
-  virtual void gDrawables(vector<IDrawable> &result) final {    
-    if (!this->drawables.empty() && this->isVisible) {
+  virtual void gDrawables(vector<IDrawable> &result) final
+  {
+    if (!this->drawables.empty() && this->isVisible)
+    {
       this->processDrawables();
       result.insert(result.end(), this->drawables.begin(), this->drawables.end());
     }
 
-    if (this->children.empty()) return;
+    if (this->children.empty())
+      return;
 
-    for(GameObject* child : this->children) {
+    for (GameObject *child : this->children)
+    {
       child->gDrawables(result);
     }
   }

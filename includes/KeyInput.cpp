@@ -8,37 +8,45 @@
 using namespace sf;
 using namespace std;
 
-class KeyInput {
+class KeyInput
+{
 public:
     static map<Keyboard::Key, bool> current_key_states;
     static map<Keyboard::Key, bool> previous_key_states;
 
-    static map<Keyboard::Key, bool> SetDefaultKeyStates() {
+    static map<Keyboard::Key, bool> SetDefaultKeyStates()
+    {
         map<Keyboard::Key, bool> keys;
 
-        for(int i = 0; i < Keyboard::KeyCount; i++) {
-            keys.insert(pair<Keyboard::Key, bool>((Keyboard::Key)i, false));    
+        for (int i = 0; i < Keyboard::KeyCount; i++)
+        {
+            keys.insert(pair<Keyboard::Key, bool>((Keyboard::Key)i, false));
         }
 
         return keys;
     }
 
-    static void UpdateKeyStates() {
-        for(int i = 0; i < Keyboard::KeyCount; i++) {
+    static void UpdateKeyStates()
+    {
+        for (int i = 0; i < Keyboard::KeyCount; i++)
+        {
             KeyInput::previous_key_states[(Keyboard::Key)i] = KeyInput::current_key_states[(Keyboard::Key)i];
             KeyInput::current_key_states[(Keyboard::Key)i] = Keyboard::isKeyPressed((Keyboard::Key)i);
         }
     }
 
-    static bool OnKey(Keyboard::Key key) {
+    static bool OnKey(Keyboard::Key key)
+    {
         return KeyInput::current_key_states[key];
     }
 
-    static bool OnKeyDown(Keyboard::Key key) {
+    static bool OnKeyDown(Keyboard::Key key)
+    {
         return (KeyInput::current_key_states[key] && !KeyInput::previous_key_states[key]);
     }
 
-    static bool OnKeyUp(Keyboard::Key key) {
+    static bool OnKeyUp(Keyboard::Key key)
+    {
         return (!KeyInput::current_key_states[key] && KeyInput::previous_key_states[key]);
     }
 };

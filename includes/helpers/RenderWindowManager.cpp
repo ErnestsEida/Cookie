@@ -7,10 +7,13 @@
 using namespace std;
 using namespace sf;
 
-class RenderWindowManager {
+class RenderWindowManager
+{
 private:
-  void isWindowPresent() const {
-    if (this->window == nullptr || !this->window->isOpen()) {
+  void isWindowPresent() const
+  {
+    if (this->window == nullptr || !this->window->isOpen())
+    {
       Profiler::Error("FATAL(RenderWindow): Trying to run manipulations on non-existing renderwindow");
     }
   }
@@ -19,29 +22,36 @@ private:
 
   uint desktopHeight() const { return VideoMode::getDesktopMode().height; }
 
-  RenderWindow* defaultWindow() const {
+  RenderWindow *defaultWindow() const
+  {
     return new RenderWindow(VideoMode(this->desktopWidth(), this->desktopHeight()), "CookieEngine Render Window", Style::Default, ContextSettings());
   }
 
-  void Init() {
+  void Init()
+  {
     this->window = defaultWindow();
   }
 
 public:
-  RenderWindow* window = nullptr;
+  RenderWindow *window = nullptr;
 
-  RenderWindowManager() {
+  RenderWindowManager()
+  {
     this->Init();
   }
 
-  void performDraw(vector<IDrawable> drawables) {
+  void performDraw(vector<IDrawable> drawables)
+  {
     isWindowPresent();
     this->window->clear();
-    
-    if (!drawables.empty()) {
+
+    if (!drawables.empty())
+    {
       IDrawable::Sort(drawables);
-      for(IDrawable drawable : drawables) {
-        if (drawable.source == nullptr) continue;
+      for (IDrawable drawable : drawables)
+      {
+        if (drawable.source == nullptr)
+          continue;
         this->window->draw(*drawable.source);
       }
     }

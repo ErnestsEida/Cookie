@@ -14,19 +14,22 @@
 using namespace std;
 using namespace sf;
 
-class CookieEngine {
+class CookieEngine
+{
 private:
   bool closeWindow = false;
 
   void validateTick() { /* TODO*/ }
 
-  void RunOnCloseCallbacks() { /* TODO */}
+  void RunOnCloseCallbacks() { /* TODO */ }
 
-  bool isScenePopulated() {
+  bool isScenePopulated()
+  {
     return !sceneManager.currentScene->objects.empty();
-  } 
-  
-  void setDeltaTime(chrono::_V2::system_clock::time_point& tp1, chrono::_V2::system_clock::time_point& tp2) {
+  }
+
+  void setDeltaTime(chrono::_V2::system_clock::time_point &tp1, chrono::_V2::system_clock::time_point &tp2)
+  {
     tp2 = chrono::system_clock::now();
     chrono::duration<float> elapsedTime = tp2 - tp1;
     tp1 = tp2;
@@ -36,39 +39,48 @@ private:
 public:
   RenderWindowManager windowManager = RenderWindowManager();
   SceneManager sceneManager = SceneManager();
-  
-  static float deltaTime;
-  static CookieEngine* singleton;
 
-  CookieEngine() {
-    if (singleton == nullptr) {
+  static float deltaTime;
+  static CookieEngine *singleton;
+
+  CookieEngine()
+  {
+    if (singleton == nullptr)
+    {
       singleton = this;
     }
-    else Profiler::Error("FATAL: Cannot create two instances of CookieEngine at a time");
+    else
+      Profiler::Error("FATAL: Cannot create two instances of CookieEngine at a time");
   }
 
-  void Stop() {
+  void Stop()
+  {
     this->closeWindow = true;
   }
 
-  void Start() {
+  void Start()
+  {
     // Setup variables
     vector<IDrawable> sceneDrawables = vector<IDrawable>();
     Event event;
     chrono::_V2::system_clock::time_point tp1 = chrono::system_clock::now();
     chrono::_V2::system_clock::time_point tp2 = chrono::system_clock::now();
 
-    while(windowManager.window->isOpen()) {
+    while (windowManager.window->isOpen())
+    {
       /* Close on exit and on closeWindow = true */
-      while(windowManager.window->pollEvent(event)) {
-        if (event.type == Event::Closed) { 
+      while (windowManager.window->pollEvent(event))
+      {
+        if (event.type == Event::Closed)
+        {
           closeWindow = true;
           break;
         }
       }
-      if (closeWindow) { 
+      if (closeWindow)
+      {
         RunOnCloseCallbacks();
-        windowManager.window->close(); 
+        windowManager.window->close();
         break;
       }
       /* ============================== */
@@ -81,8 +93,10 @@ public:
       sceneDrawables.shrink_to_fit();
       Collider::reloadColliders();
 
-      if (isScenePopulated()) {
-        for(GameObject* gameobject : sceneManager.currentScene->objects) {
+      if (isScenePopulated())
+      {
+        for (GameObject *gameobject : sceneManager.currentScene->objects)
+        {
           gameobject->beforeUpdate();
           gameobject->processChildren("before");
 
@@ -91,7 +105,7 @@ public:
 
           gameobject->afterUpdate();
           gameobject->processChildren("after");
-          
+
           gameobject->gDrawables(sceneDrawables);
         }
       }
@@ -102,4 +116,4 @@ public:
 };
 
 float CookieEngine::deltaTime = 0;
-CookieEngine* CookieEngine::singleton = nullptr;
+CookieEngine *CookieEngine::singleton = nullptr;
