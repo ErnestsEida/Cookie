@@ -22,4 +22,11 @@ namespace WindowHelper
       return Vector2u(0, 0);
     return CookieEngine::singleton->windowManager.window->getSize();
   }
+
+  Vector2i mousePosition()
+  {
+    if (!windowPresent())
+      return Vector2i(0, 0);
+    return Mouse::getPosition(*CookieEngine::singleton->singleton->windowManager.window);
+  }
 }

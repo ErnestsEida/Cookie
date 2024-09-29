@@ -70,6 +70,20 @@ public:
     this->children.push_back(child);
   }
 
+  /* TODO: Manage removed gameobject memory freeing -?-> Thread where all deleted gameobjects are saved and removed async? */
+  virtual void removeChild(GameObject *childToRemove) final
+  {
+    vector<GameObject *> moveChildrenVec;
+    for (GameObject *child : children)
+    {
+      if (child->id == childToRemove->id)
+        continue;
+      moveChildrenVec.push_back(child);
+    }
+
+    this->children = moveChildrenVec;
+  }
+
   virtual void processChildren(string regulator) final
   {
     if (children.empty())

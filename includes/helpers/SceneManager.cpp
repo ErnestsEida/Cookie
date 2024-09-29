@@ -57,7 +57,16 @@ public:
     this->currentScene->objects.push_back(newObject);
   }
 
-  void removeObject(string objectId)
+  /* TODO: Rewrite, this is extremely dirty */
+  void removeObject(GameObject *objectToRemove)
   {
+    vector<GameObject *> replaceVector;
+    for (GameObject *object : this->currentScene->objects)
+    {
+      if (object->id == objectToRemove->id)
+        continue;
+      replaceVector.push_back(object);
+    }
+    this->currentScene->objects = replaceVector;
   }
 };
