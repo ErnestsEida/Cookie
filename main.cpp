@@ -6,11 +6,12 @@
 
 using namespace std;
 
-int main() {
+int main()
+{
   Scene::AddScene("main", new MainScene());
   Scene::AddScene("main2", new MainScene2());
 
-  CookieEngine* engine = new CookieEngine();
+  CookieEngine *engine = new CookieEngine();
   engine->Start();
   return 0;
 }
