@@ -53,18 +53,13 @@ public:
   }
 };
 
-class RenderWindowManager
+class DisplayWindow : public RenderWindow
 {
 private:
   ViewManager viewManager;
 
   void isWindowPresent() const
   {
-    if (this->window == nullptr || !this->window->isOpen())
-    {
-      Profiler::Error("FATAL(RenderWindow): Trying to run manipulations on non-existing renderwindow");
-    }
-
     if (this->viewManager.viewports.empty())
     {
       Profiler::Error("FATAL(RenderWindow): No active views detected, at least 1 view should be present");
@@ -75,49 +70,42 @@ private:
 
   uint desktopHeight() const { return VideoMode::getDesktopMode().height; }
 
-  RenderWindow *defaultWindow() const
-  {
-    return new RenderWindow(VideoMode(this->desktopWidth(), this->desktopHeight()), "CookieEngine Render Window", Style::Default, ContextSettings());
-  }
-
   void Init()
   {
-    this->window = defaultWindow();
-    this->viewManager = ViewManager(this->window->getView());
+    this->viewManager = ViewManager(this->getView());
   }
 
 public:
-  RenderWindow *window = nullptr;
-
-  RenderWindowManager()
+  DisplayWindow(uint width = VideoMode::getDesktopMode().width, uint height = VideoMode::getDesktopMode().height, string title = "CookieGame", int style = Style::Default, ContextSettings settings = ContextSettings())
+      : RenderWindow(VideoMode(width, height), title, style, settings)
   {
     this->Init();
   }
 
-  void performDraw(vector<IDrawable> drawables)
+  void draw(vector<IDrawable> drawables)
   {
     isWindowPresent();
-    this->window->clear();
+    this->clear();
 
     if (!drawables.empty())
     {
       IDrawable::Sort(drawables);
       for (ViewPair viewPair : this->viewManager.viewports)
       {
-        this->window->setView(viewPair.second);
+        this->setView(viewPair.second);
         for (IDrawable drawable : drawables)
         {
           if (drawable.source == nullptr)
             continue;
-          this->window->draw(*drawable.source);
+          RenderWindow::draw(*drawable.source);
         }
       }
     }
 
-    this->window->display();
+    this->display();
   }
 
-  View getView(string key)
+  View fetchView(string key)
   {
     return this->viewManager.getView(key);
   }

@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Profiler.cpp"
-#include "helpers/RenderWindowManager.cpp"
+#include "helpers/DisplayWindow.cpp"
 #include "helpers/SceneManager.cpp"
 #include "Gameobject.cpp"
 #include "Collider.cpp"
@@ -37,7 +37,7 @@ private:
   }
 
 public:
-  RenderWindowManager windowManager = RenderWindowManager();
+  DisplayWindow window = DisplayWindow();
   SceneManager sceneManager = SceneManager();
 
   static float deltaTime;
@@ -66,10 +66,10 @@ public:
     chrono::_V2::system_clock::time_point tp1 = chrono::system_clock::now();
     chrono::_V2::system_clock::time_point tp2 = chrono::system_clock::now();
 
-    while (windowManager.window->isOpen())
+    while (this->window.isOpen())
     {
       /* Close on exit and on closeWindow = true */
-      while (windowManager.window->pollEvent(event))
+      while (this->window.pollEvent(event))
       {
         if (event.type == Event::Closed)
         {
@@ -80,7 +80,7 @@ public:
       if (closeWindow)
       {
         RunOnCloseCallbacks();
-        windowManager.window->close();
+        window.close();
         break;
       }
       /* ============================== */
@@ -110,7 +110,7 @@ public:
         }
       }
 
-      windowManager.performDraw(sceneDrawables);
+      window.draw(sceneDrawables);
     }
   }
 };
