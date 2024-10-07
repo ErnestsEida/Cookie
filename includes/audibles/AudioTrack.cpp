@@ -15,7 +15,7 @@ struct AudioTrackSettings
 class AudioTrack
 {
 private:
-  static map<string, AudioTrack> lines;
+  static map<string, AudioTrack *> lines;
 
   // Object variables
   vector<BaseAudible *> audibles = vector<BaseAudible *>();
@@ -37,16 +37,16 @@ private:
 public:
   static void registerTrack(string trackName)
   {
-    AudioTrack::lines.insert(pair(trackName, AudioTrack()));
+    AudioTrack::lines.insert(pair(trackName, new AudioTrack()));
   }
 
   static void appendAudible(string trackName, BaseAudible *audible)
   {
     try
     {
-      AudioTrack selectedTrack = AudioTrack::lines.at(trackName);
-      selectedTrack.audibles.push_back(audible);
-      selectedTrack.applySettingsToAudible(audible);
+      AudioTrack *selectedTrack = AudioTrack::lines.at(trackName);
+      selectedTrack->audibles.push_back(audible);
+      selectedTrack->applySettingsToAudible(audible);
     }
     catch (out_of_range const &e)
     {
@@ -58,9 +58,7 @@ public:
   {
     try
     {
-      AudioTrack selectedTrack = AudioTrack::lines.at(trackName);
-      cout << selectedTrack.audibles.size() << endl;
-      selectedTrack.refreshSettings();
+      AudioTrack::lines.at(trackName)->refreshSettings();
     }
     catch (out_of_range const &e)
     {
@@ -72,7 +70,7 @@ public:
   {
     try
     {
-      return &AudioTrack::lines.at(trackName).settings;
+      return &AudioTrack::lines.at(trackName)->settings;
     }
     catch (out_of_range const &e)
     {
@@ -82,4 +80,4 @@ public:
   }
 };
 
-map<string, AudioTrack> AudioTrack::lines = map<string, AudioTrack>();
+map<string, AudioTrack *> AudioTrack::lines = map<string, AudioTrack *>();
