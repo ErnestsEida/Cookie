@@ -3,4 +3,5 @@
 
 class DistanceAudio : public BaseAudible
 {
+  /* TODO: Implement :) */
 };
