@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <SFML/Audio.hpp>
+#include "../helpers/Utils.cpp"
 
 using namespace std;
 using namespace sf;
@@ -67,7 +68,7 @@ public:
 
   void setVolume(float volume)
   {
-    this->volume = volume;
+    this->volume = Utils::constrainFloat(0, 100, volume);
     this->abstractSource->setVolume(this->volume);
   }
 
