@@ -1,4 +1,4 @@
-# CookieEngine - V5
+# CookieEngine
 
 CookieEngine is a **GAME ENGINE** made in C++ on top of SFML graphics library
 
